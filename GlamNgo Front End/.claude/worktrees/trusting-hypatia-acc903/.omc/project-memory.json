@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1776646620871,
+  "projectRoot": "/Users/personal/Desktop/GlamNgo/.claude/worktrees/trusting-hypatia-acc903",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "my-app": {
+      "path": "my-app",
+      "purpose": null,
+      "fileCount": 10,
+      "lastAccessed": 1776646620849,
+      "keyFiles": [
+        "README.md",
+        "auth.ts",
+        "components.json",
+        "eslint.config.mjs",
+        "next.config.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "my-app/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1776646632513,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

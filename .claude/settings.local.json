@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(/Users/personal/.pyenv/versions/3.12.8/bin/pip install:*)",
+      "Bash(/Users/personal/.pyenv/versions/3.12.8/bin/python3 -c \"import mediapipe; print\\(''mediapipe'', mediapipe.__version__\\)\")",
+      "Bash(xargs kill:*)",
+      "Bash(sqlite3 \"/Users/personal/Desktop/Grad/update project/Graduation Project/backend/instance/glamngo.db\" \".schema\")",
+      "Bash(/dev/null lsof:*)",
+      "Bash(/dev/null echo:*)",
+      "Bash(/Users/personal/.pyenv/versions/3.12.8/bin/python3 -c \":*)",
+      "Bash(timeout 5 /Users/personal/.pyenv/versions/3.12.8/bin/python3 admin_server.py)",
+      "Bash(curl -s -c /tmp/admin_cookies.txt -b /tmp/admin_cookies.txt -X POST http://localhost:5002/login -d \"email=admin@glamngo.com&password=admin123\" -L -o /tmp/admin_resp.html -w \"%{http_code} -> %{url_effective}\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:5002/login)",
+      "Bash(curl -s -c /tmp/c2.txt -b /tmp/c2.txt -X POST http://localhost:5002/login -d \"email=admin@glamngo.com&password=admin123\" -w \"\\\\nHTTP %{http_code}\" -o /dev/null echo \"\" curl -s -c /tmp/c2.txt -b /tmp/c2.txt http://localhost:5002/)",
+      "Bash(sqlite3 \"/Users/personal/Desktop/Grad/update project/Graduation Project/backend/instance/glamngo.db\" \":*)",
+      "Bash(sqlite3 \"/Users/personal/Desktop/Grad/update project/Graduation Project/backend/instance/glamngo.db\" \"SELECT id, status, total_price FROM bookings WHERE status IN \\(''CONFIRMED'',''COMPLETED''\\);\")",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 -c \"import admin_server; print\\(''OK''\\)\")"
+    ]
+  }
+}

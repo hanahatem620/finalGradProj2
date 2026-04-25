@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"grep -rn \\\"fetch(\\\" \\\"/Users/personal/Desktop/Grad/GlamNgo Front End/my-app/src\\\" --include=\\\"*.ts\\\" --include=\\\"*.tsx\\\" | grep -E \\\"use server|localhost:8080|localhost:5001\\\" | head -30\\n...",
+  "error": "Exit code 7\n/Users/personal/Desktop/Grad/GlamNgo Front End/my-app/src/profileActions/aiFeatures.action.ts:13:  const res = await fetch('http://localhost:8080/api/apply-makeup-look', {\n/Users/personal/Desktop/Grad/GlamNgo Front End/my-app/src/profileActions/customMakeup.ts:7:  const res = await fetch('http://localhost:8080/api/apply-custom-makeup', {\n/Users/personal/Desktop/Grad/GlamNgo Front End/my-app/src/profileActions/tryOnMakeup.action.ts:9:  const res = await fetch('http://localhost:8080/ap...",
+  "timestamp": "2026-04-25T12:31:09.184Z",
+  "retry_count": 1
+}

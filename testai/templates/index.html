@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Makeup Try-On - Try Makeup with Artificial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Arial:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .live-badge {
+            display: inline-block;
+            background: #e53935;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            margin-left: 8px;
+            vertical-align: middle;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+        #liveCanvas { width: 100%; border-radius: 10px; display: none; }
+        #videoEl { width: 100%; border-radius: 10px; display: none; }
+        .camera-controls { display: flex; gap: 10px; margin-top: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .color-picker-container { position: relative; }
+        .custom-color-picker {
+            display: flex; align-items: center; gap: 12px;
+            width: 100%; padding: 10px 14px; border-radius: 10px;
+            cursor: pointer; border: 2px solid #e0e0e0;
+            background: #f8f8f8; transition: border-color 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+        .custom-color-picker.selected { border-color: #333; box-shadow: 0 0 0 3px rgba(0,0,0,0.12); }
+        .color-swatch-preview { width: 40px; height: 40px; border-radius: 8px; border: 2px solid rgba(0,0,0,0.15); flex-shrink: 0; }
+        .color-pick-label { font-weight: 600; font-size: 0.95rem; color: #333; }
+        .custom-picker-popup {
+            position: absolute; top: calc(100% + 6px); left: 0; z-index: 1000;
+            background: #fff; border-radius: 12px; padding: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.18); border: 1px solid #ddd; width: 280px;
+        }
+        .picker-canvas { width: 100%; height: 150px; border-radius: 8px; cursor: crosshair; display: block; }
+        .hue-slider {
+            width: 100%; margin-top: 10px; cursor: pointer;
+            -webkit-appearance: none; height: 14px; border-radius: 7px; outline: none;
+            background: linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);
+        }
+        .hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #333; cursor: pointer; }
+        .hue-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #333; cursor: pointer; }
+        .picker-bottom { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .picker-preview { width: 36px; height: 36px; border-radius: 6px; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.15); }
+        .hex-input { flex: 1; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; font-family: monospace; outline: none; }
+        .hex-input:focus { border-color: #333; }
+.live-result-section {
+            margin-top: 20px;
+            display: none;
+        }
+        .live-result-section h3 { text-align: center; margin-bottom: 10px; }
+        #liveResultImg { width: 100%; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ AI Makeup Try-On</h1>
+            <p>Try makeup with artificial intelligence - select the area, color, and intensity</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h2 style="margin-bottom: 20px;">📸 Upload Your Photo</h2>
+
+                <!-- Static upload area -->
+                <div class="upload-area" id="uploadArea">
+                    <p style="font-size: 3rem;">📷</p>
+                    <h3>Click to Upload Image</h3>
+                    <p>Or drag the image here</p>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                </div>
+
+                <!-- Camera section -->
+                <div class="camera-controls">
+                    <button class="btn btn-secondary" id="startCameraBtn">📹 Start Camera</button>
+                    <button class="btn btn-secondary" id="captureBtn" style="display:none;">📸 Capture Photo</button>
+                    <button class="btn btn-secondary" id="stopCameraBtn" style="display:none;">⏹ Stop Camera</button>
+                </div>
+
+                <!-- Live camera feed -->
+                <video id="videoEl" autoplay playsinline></video>
+                <!-- Live result canvas (shown during live mode) -->
+                <canvas id="liveCanvas"></canvas>
+
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImg" src="" alt="Preview">
+                </div>
+
+                <div class="error-message message" id="errorMessage"></div>
+                <div class="success-message message" id="successMessage"></div>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="controls-section">
+                <div class="tabs">
+                    <button class="tab active" data-tab="custom">🎨 Customize Makeup</button>
+                    <button class="tab" data-tab="presets">✨ Ready Looks</button>
+                </div>
+
+                <!-- Customization Tab -->
+                <div class="tab-content active" id="custom-tab">
+                    <h3 style="margin-bottom: 20px;">Choose the area, color, and intensity:</h3>
+
+                    <!-- Lipstick -->
+                    <div class="makeup-control" data-type="lipstick">
+                        <div class="makeup-control-header">
+                            <span class="makeup-icon">💄</span>
+                            <div class="makeup-control-title">
+                                <h3>Lipstick</h3>
+                                <p>Choose your preferred lip color</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="makeup-toggle" data-type="lipstick">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="color-picker-container">
+                            <div class="custom-color-picker selected" data-color="220,20,60">
+                                <div class="color-swatch-preview" style="background:#dc143c"></div>
+                                <span class="color-pick-label">🎨 Pick Color</span>
+                            </div>
+                            <div class="custom-picker-popup" style="display:none">
+                                <canvas class="picker-canvas" width="256" height="150"></canvas>
+                                <input type="range" class="hue-slider" min="0" max="360" value="0">
+                                <div class="picker-bottom">
+                                    <div class="picker-preview" style="background:#dc143c"></div>
+                                    <input type="text" class="hex-input" value="#dc143c" maxlength="7" placeholder="#000000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intensity-slider">
+                            <label><span>Intensity</span><span class="intensity-value">70%</span></label>
+                            <input type="range" min="0" max="100" value="70" class="intensity-input">
+                        </div>
+                    </div>
+
+                    <!-- Eyeshadow -->
+                    <div class="makeup-control" data-type="eyeshadow">
+                        <div class="makeup-control-header">
+                            <span class="makeup-icon">👁️</span>
+                            <div class="makeup-control-title">
+                                <h3>Eyeshadow</h3>
+                                <p>Choose eyeshadow color</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="makeup-toggle" data-type="eyeshadow">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="color-picker-container">
+                            <div class="custom-color-picker selected" data-color="138,43,226">
+                                <div class="color-swatch-preview" style="background:#8a2be2"></div>
+                                <span class="color-pick-label">🎨 Pick Color</span>
+                            </div>
+                            <div class="custom-picker-popup" style="display:none">
+                                <canvas class="picker-canvas" width="256" height="150"></canvas>
+                                <input type="range" class="hue-slider" min="0" max="360" value="275">
+                                <div class="picker-bottom">
+                                    <div class="picker-preview" style="background:#8a2be2"></div>
+                                    <input type="text" class="hex-input" value="#8a2be2" maxlength="7" placeholder="#000000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intensity-slider">
+                            <label><span>Intensity</span><span class="intensity-value">60%</span></label>
+                            <input type="range" min="0" max="100" value="60" class="intensity-input">
+                        </div>
+                    </div>
+
+                    <!-- Blush -->
+                    <div class="makeup-control" data-type="blush">
+                        <div class="makeup-control-header">
+                            <span class="makeup-icon">🌸</span>
+                            <div class="makeup-control-title">
+                                <h3>Blush</h3>
+                                <p>Choose blush color</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="makeup-toggle" data-type="blush">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="color-picker-container">
+                            <div class="custom-color-picker selected" data-color="255,182,193">
+                                <div class="color-swatch-preview" style="background:#ffb6c1"></div>
+                                <span class="color-pick-label">🎨 Pick Color</span>
+                            </div>
+                            <div class="custom-picker-popup" style="display:none">
+                                <canvas class="picker-canvas" width="256" height="150"></canvas>
+                                <input type="range" class="hue-slider" min="0" max="360" value="351">
+                                <div class="picker-bottom">
+                                    <div class="picker-preview" style="background:#ffb6c1"></div>
+                                    <input type="text" class="hex-input" value="#ffb6c1" maxlength="7" placeholder="#000000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intensity-slider">
+                            <label><span>Intensity</span><span class="intensity-value">30%</span></label>
+                            <input type="range" min="0" max="100" value="30" class="intensity-input">
+                        </div>
+                    </div>
+
+                    <!-- Eyeliner -->
+                    <div class="makeup-control" data-type="eyeliner">
+                        <div class="makeup-control-header">
+                            <span class="makeup-icon">✏️</span>
+                            <div class="makeup-control-title">
+                                <h3>Eyeliner</h3>
+                                <p>Define the eyes</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="makeup-toggle" data-type="eyeliner">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="color-picker-container">
+                            <div class="custom-color-picker selected" data-color="0,0,0">
+                                <div class="color-swatch-preview" style="background:#000000"></div>
+                                <span class="color-pick-label">🎨 Pick Color</span>
+                            </div>
+                            <div class="custom-picker-popup" style="display:none">
+                                <canvas class="picker-canvas" width="256" height="150"></canvas>
+                                <input type="range" class="hue-slider" min="0" max="360" value="0">
+                                <div class="picker-bottom">
+                                    <div class="picker-preview" style="background:#000000"></div>
+                                    <input type="text" class="hex-input" value="#000000" maxlength="7" placeholder="#000000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intensity-slider">
+                            <label><span>Thickness</span><span class="intensity-value">2px</span></label>
+                            <input type="range" min="1" max="5" value="2" class="intensity-input">
+                        </div>
+                    </div>
+
+                    <!-- Foundation -->
+                    <div class="makeup-control" data-type="foundation">
+                        <div class="makeup-control-header">
+                            <span class="makeup-icon">✨</span>
+                            <div class="makeup-control-title">
+                                <h3>Foundation</h3>
+                                <p>Skin smoothing</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="makeup-toggle" data-type="foundation">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="intensity-slider">
+                            <label><span>Intensity</span><span class="intensity-value">20%</span></label>
+                            <input type="range" min="0" max="100" value="20" class="intensity-input">
+                        </div>
+                    </div>
+
+                    <!-- Eyebrows -->
+                    <div class="makeup-control" data-type="eyebrows">
+                        <div class="makeup-control-header">
+                            <span class="makeup-icon">👁️‍🗨️</span>
+                            <div class="makeup-control-title">
+                                <h3>Eyebrows</h3>
+                                <p>Eyebrow color</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="makeup-toggle" data-type="eyebrows">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="color-picker-container">
+                            <div class="custom-color-picker selected" data-color="70,40,20">
+                                <div class="color-swatch-preview" style="background:#46281e"></div>
+                                <span class="color-pick-label">🎨 Pick Color</span>
+                            </div>
+                            <div class="custom-picker-popup" style="display:none">
+                                <canvas class="picker-canvas" width="256" height="150"></canvas>
+                                <input type="range" class="hue-slider" min="0" max="360" value="15">
+                                <div class="picker-bottom">
+                                    <div class="picker-preview" style="background:#46281e"></div>
+                                    <input type="text" class="hex-input" value="#46281e" maxlength="7" placeholder="#000000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intensity-slider">
+                            <label><span>Intensity</span><span class="intensity-value">40%</span></label>
+                            <input type="range" min="0" max="100" value="40" class="intensity-input">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="applyCustomBtn" disabled>✨ Apply Makeup</button>
+                </div>
+
+                <!-- Ready Looks Tab -->
+                <div class="tab-content" id="presets-tab">
+                    <h3 style="margin-bottom: 20px;">Choose a ready look:</h3>
+                    <div class="preset-looks" id="presetLooks"></div>
+                    <button class="btn btn-primary" id="applyPresetBtn" disabled>✨ Apply Look</button>
+                </div>
+
+                <div class="loading" id="processingLoading">
+                    <div class="spinner"></div>
+                    <p>Processing image...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Static Result Section -->
+        <div class="result-section" id="resultSection" style="display: none;">
+            <div style="padding: 0 30px 30px;">
+                <h2 style="text-align: center; margin-bottom: 20px;">📸 Result</h2>
+                <div class="result-images" id="resultImages">
+                    <div class="result-image-wrapper" id="landmarkWrapper">
+                        <h3>Face Detection <span id="landmarkLoading" style="font-size:0.7em;color:#aaa;">⏳</span></h3>
+                        <img id="landmarkImage" src="" alt="Landmarks">
+                    </div>
+                    <div class="result-image-wrapper">
+                        <h3>After Makeup</h3>
+                        <img id="processedImage" src="" alt="Processed">
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="downloadBtn">💾 Download Image</button>
+                    <button class="btn btn-secondary" id="tryAgainBtn">🔄 Try Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Result Section (shown during live camera mode) -->
+        <div class="live-result-section" id="liveResultSection">
+            <h3>🔴 Live Preview <span class="live-badge">LIVE</span></h3>
+            <img id="liveResultImg" src="" alt="Live makeup result">
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080';
+
+        let currentImage = null;
+        let selectedPresetId = null;
+        let cameraStream = null;
+        let liveMode = false;
+        let liveInterval = null;
+        let isProcessingLive = false;
+        // DOM refs
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const processingLoading = document.getElementById('processingLoading');
+        const resultSection = document.getElementById('resultSection');
+        const processedImage = document.getElementById('processedImage');
+        const applyCustomBtn = document.getElementById('applyCustomBtn');
+        const applyPresetBtn = document.getElementById('applyPresetBtn');
+        const videoEl = document.getElementById('videoEl');
+        const liveCanvas = document.getElementById('liveCanvas');
+        const liveResultSection = document.getElementById('liveResultSection');
+        const liveResultImg = document.getElementById('liveResultImg');
+
+        // ── Upload ──────────────────────────────────────────────────────────────
+        uploadArea.addEventListener('click', () => imageInput.click());
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.background = '#e3f2fd'; });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = 'white'; });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = 'white';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) handleImageUpload(file);
+        });
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) handleImageUpload(e.target.files[0]);
+        });
+
+        function handleImageUpload(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImage = e.target.result;
+                previewImg.src = currentImage;
+                imagePreview.style.display = 'block';
+                applyCustomBtn.disabled = false;
+                applyPresetBtn.disabled = false;
+                resultSection.style.display = 'none';
+                showSuccess('Image uploaded successfully!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ── Camera ──────────────────────────────────────────────────────────────
+        document.getElementById('startCameraBtn').addEventListener('click', async () => {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoEl.srcObject = cameraStream;
+                videoEl.style.display = 'block';
+                uploadArea.style.display = 'none';
+                document.getElementById('startCameraBtn').style.display = 'none';
+                document.getElementById('captureBtn').style.display = 'inline-block';
+                document.getElementById('stopCameraBtn').style.display = 'inline-block';
+            } catch (err) {
+                showError('Cannot access camera. Please allow camera permission or upload an image.');
+            }
+        });
+
+        document.getElementById('captureBtn').addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoEl.videoWidth;
+            canvas.height = videoEl.videoHeight;
+            canvas.getContext('2d').drawImage(videoEl, 0, 0);
+            currentImage = canvas.toDataURL('image/png');
+            previewImg.src = currentImage;
+            imagePreview.style.display = 'block';
+            applyCustomBtn.disabled = false;
+            applyPresetBtn.disabled = false;
+            stopCamera();
+            showSuccess('Photo captured! Choose your makeup and apply.');
+        });
+
+        document.getElementById('stopCameraBtn').addEventListener('click', () => {
+            stopLiveMode();
+            stopCamera();
+        });
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(t => t.stop());
+                cameraStream = null;
+            }
+            videoEl.style.display = 'none';
+            liveCanvas.style.display = 'none';
+            uploadArea.style.display = 'block';
+            document.getElementById('startCameraBtn').style.display = 'inline-block';
+            document.getElementById('captureBtn').style.display = 'none';
+            document.getElementById('stopCameraBtn').style.display = 'none';
+            liveResultSection.style.display = 'none';
+        }
+
+        function stopLiveMode() {
+            liveMode = false;
+            liveResultSection.style.display = 'none';
+            clearInterval(liveInterval);
+            liveInterval = null;
+        }
+
+        // ── Tabs ────────────────────────────────────────────────────────────────
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+
+        // ── Custom Color Picker Helpers ──────────────────────────────────────────
+        function hsvToRgb(h, s, v) {
+            const i = Math.floor(h / 60) % 6;
+            const f = h / 60 - Math.floor(h / 60);
+            const p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+            const variants = [[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]];
+            return variants[i].map(x => Math.round(x * 255));
+        }
+
+        function drawPickerCanvas(canvas, hue) {
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            const [r, g, b] = hsvToRgb(hue, 1, 1);
+            const gradH = ctx.createLinearGradient(0, 0, w, 0);
+            gradH.addColorStop(0, '#fff');
+            gradH.addColorStop(1, `rgb(${r},${g},${b})`);
+            ctx.fillStyle = gradH;
+            ctx.fillRect(0, 0, w, h);
+            const gradV = ctx.createLinearGradient(0, 0, 0, h);
+            gradV.addColorStop(0, 'rgba(0,0,0,0)');
+            gradV.addColorStop(1, '#000');
+            ctx.fillStyle = gradV;
+            ctx.fillRect(0, 0, w, h);
+        }
+
+        function initColorPicker(control, customPicker, toggle) {
+            const popup = control.querySelector('.custom-picker-popup');
+            const canvas = popup.querySelector('.picker-canvas');
+            const hueSlider = popup.querySelector('.hue-slider');
+            const preview = popup.querySelector('.picker-preview');
+            const hexInput = popup.querySelector('.hex-input');
+            let hue = parseInt(hueSlider.value);
+            let isDragging = false;
+
+            function applyColor(r, g, b) {
+                const hex = '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+                preview.style.background = hex;
+                hexInput.value = hex;
+                customPicker.querySelector('.color-swatch-preview').style.background = hex;
+                customPicker.dataset.color = `${r},${g},${b}`;
+                customPicker.classList.add('selected');
+                toggle.checked = true;
+                control.classList.add('active');
+            }
+
+            function pickFromCanvas(clientX, clientY) {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.max(0, Math.min(canvas.width, (clientX - rect.left) * (canvas.width / rect.width)));
+                const y = Math.max(0, Math.min(canvas.height, (clientY - rect.top) * (canvas.height / rect.height)));
+                const [r, g, b] = hsvToRgb(hue, x / canvas.width, 1 - y / canvas.height);
+                applyColor(r, g, b);
+            }
+
+            canvas.addEventListener('mousedown', (e) => { isDragging = true; pickFromCanvas(e.clientX, e.clientY); });
+            canvas.addEventListener('mousemove', (e) => { if (isDragging) pickFromCanvas(e.clientX, e.clientY); });
+            document.addEventListener('mouseup', () => { isDragging = false; });
+            canvas.addEventListener('touchstart', (e) => { isDragging = true; pickFromCanvas(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }, { passive: false });
+            canvas.addEventListener('touchmove', (e) => { if (isDragging) pickFromCanvas(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }, { passive: false });
+            document.addEventListener('touchend', () => { isDragging = false; });
+
+            hueSlider.addEventListener('input', () => {
+                hue = parseInt(hueSlider.value);
+                drawPickerCanvas(canvas, hue);
+                const currentHex = hexInput.value;
+                const rgb = hexToRgb(currentHex).split(',').map(Number);
+                preview.style.background = currentHex;
+            });
+
+            hexInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+                    preview.style.background = val;
+                    customPicker.querySelector('.color-swatch-preview').style.background = val;
+                    customPicker.dataset.color = hexToRgb(val);
+                    customPicker.classList.add('selected');
+                    toggle.checked = true;
+                    control.classList.add('active');
+                }
+            });
+
+            customPicker.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = popup.style.display !== 'none';
+                document.querySelectorAll('.custom-picker-popup').forEach(p => p.style.display = 'none');
+                if (!isOpen) {
+                    popup.style.display = 'block';
+                    hue = parseInt(hueSlider.value);
+                    drawPickerCanvas(canvas, hue);
+                }
+            });
+
+            popup.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        // Close all pickers when clicking outside
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.custom-picker-popup').forEach(p => p.style.display = 'none');
+        });
+
+        // ── Makeup Controls ──────────────────────────────────────────────────────
+        document.querySelectorAll('.makeup-control').forEach(control => {
+            const type = control.dataset.type;
+            const toggle = control.querySelector('.makeup-toggle');
+
+            toggle.addEventListener('change', () => {
+                control.classList.toggle('active', toggle.checked);
+            });
+
+            control.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    control.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    toggle.checked = true;
+                    control.classList.add('active');
+                });
+            });
+
+            const customPicker = control.querySelector('.custom-color-picker');
+            if (customPicker) {
+                initColorPicker(control, customPicker, toggle);
+            }
+
+            const intensityInput = control.querySelector('.intensity-input');
+            const intensityValue = control.querySelector('.intensity-value');
+            if (intensityInput && intensityValue) {
+                intensityInput.addEventListener('input', (e) => {
+                    intensityValue.textContent = type === 'eyeliner' ? e.target.value + 'px' : e.target.value + '%';
+                });
+            }
+        });
+
+        // ── Build Config from Controls ───────────────────────────────────────────
+        function buildCustomConfig() {
+            const config = {};
+            document.querySelectorAll('.makeup-control').forEach(control => {
+                const type = control.dataset.type;
+                const toggle = control.querySelector('.makeup-toggle');
+                if (!toggle.checked) return;
+
+                const intensityInput = control.querySelector('.intensity-input');
+                const selectedColor = control.querySelector('.color-option.selected, .custom-color-picker.selected');
+
+                config[type] = {
+                    intensity: intensityInput
+                        ? (type === 'eyeliner' ? parseInt(intensityInput.value) : parseFloat(intensityInput.value) / 100)
+                        : 0.5
+                };
+
+                if (selectedColor && selectedColor.dataset.color) {
+                    const [r, g, b] = selectedColor.dataset.color.split(',').map(Number);
+                    config[type].color = [b, g, r]; // OpenCV uses BGR; swap R and B
+                }
+
+                if (type === 'eyeliner') {
+                    config[type].thickness = parseInt(intensityInput.value);
+                }
+            });
+            return config;
+        }
+
+        // ── Apply Custom Makeup ──────────────────────────────────────────────────
+        applyCustomBtn.addEventListener('click', () => applyCustomMakeup(false));
+
+        async function applyCustomMakeup(silent = false) {
+            if (!currentImage) { showError('Please upload a photo first'); return; }
+
+            const config = buildCustomConfig();
+            if (Object.keys(config).length === 0) {
+                if (!silent) showError('Please enable at least one makeup option');
+                return;
+            }
+
+            try {
+                if (!silent) processingLoading.style.display = 'block';
+
+                const response = await fetch(`${API_URL}/api/apply-custom-makeup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: currentImage, config })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResult(currentImage, data.image);
+                    if (!silent) showSuccess('Makeup applied successfully!');
+                } else {
+                    showError(data.error || 'Failed to apply makeup');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                if (!silent) showError('Error processing image');
+            } finally {
+                processingLoading.style.display = 'none';
+            }
+        }
+
+        // ── Apply Preset Look ────────────────────────────────────────────────────
+        async function loadPresets() {
+            try {
+                const response = await fetch(`${API_URL}/api/makeup-looks`);
+                const data = await response.json();
+                if (data.success) displayPresets(data.looks);
+            } catch (err) {
+                console.error('Error loading presets:', err);
+            }
+        }
+
+        function displayPresets(looks) {
+            const container = document.getElementById('presetLooks');
+            container.innerHTML = '';
+            looks.forEach(look => {
+                const preset = document.createElement('div');
+                preset.className = 'preset-look';
+                preset.dataset.lookId = look.id;
+                const colors = look.colors_rgb.map(c => `<div class="preset-color-dot" style="background: ${c};"></div>`).join('');
+                preset.innerHTML = `<div class="preset-colors">${colors}</div><h4>${look.name}</h4><p>${look.artist}</p>`;
+                preset.addEventListener('click', () => {
+                    document.querySelectorAll('.preset-look').forEach(p => p.classList.remove('selected'));
+                    preset.classList.add('selected');
+                    selectedPresetId = look.id;
+                });
+                container.appendChild(preset);
+            });
+        }
+
+        applyPresetBtn.addEventListener('click', async () => {
+            if (!currentImage) { showError('Please upload a photo first'); return; }
+            if (!selectedPresetId) { showError('Please select a look'); return; }
+
+            try {
+                processingLoading.style.display = 'block';
+                const response = await fetch(`${API_URL}/api/apply-makeup-look`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: currentImage, look_id: selectedPresetId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    displayResult(currentImage, data.image);
+                    showSuccess(`Applied "${data.look_name}" successfully!`);
+                } else {
+                    showError(data.error || 'Failed to apply look');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showError('Error processing image');
+            } finally {
+                processingLoading.style.display = 'none';
+            }
+        });
+
+        // ── Result Display ───────────────────────────────────────────────────────
+        const landmarkWrapper = document.getElementById('landmarkWrapper');
+        const landmarkImage   = document.getElementById('landmarkImage');
+        const landmarkLoading = document.getElementById('landmarkLoading');
+
+        function displayResult(original, processed) {
+            processedImage.src = processed;
+            resultSection.style.display = 'block';
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Fetch landmark overlay asynchronously
+            landmarkWrapper.style.display = 'block';
+            landmarkLoading.style.display = 'inline';
+            landmarkImage.src = '';
+            fetch(`${API_URL}/api/detect-landmarks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: original })
+            })
+            .then(r => r.json())
+            .then(data => {
+                landmarkLoading.style.display = 'none';
+                if (data.success) {
+                    landmarkImage.src = data.image;
+                } else {
+                    landmarkWrapper.style.display = 'none';
+                }
+            })
+            .catch(() => { landmarkWrapper.style.display = 'none'; });
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = processedImage.src;
+            link.download = `makeup_${Date.now()}.png`;
+            link.click();
+        });
+
+        document.getElementById('tryAgainBtn').addEventListener('click', () => {
+            resultSection.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ── Helpers ──────────────────────────────────────────────────────────────
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result
+                ? `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)}`
+                : '220,20,60';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => { errorMessage.style.display = 'none'; }, 5000);
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            setTimeout(() => { successMessage.style.display = 'none'; }, 5000);
+        }
+
+        window.addEventListener('DOMContentLoaded', loadPresets);
+    </script>
+</body>
+</html>

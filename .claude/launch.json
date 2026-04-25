@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend-api",
+      "runtimeExecutable": "/Users/personal/.pyenv/versions/3.12.8/bin/python3",
+      "runtimeArgs": ["/Users/personal/Desktop/Grad/update project/Graduation Project/backend/run.py"],
+      "port": 5001
+    },
+    {
+      "name": "db-admin",
+      "runtimeExecutable": "/Users/personal/.pyenv/versions/3.12.8/bin/python3",
+      "runtimeArgs": ["/Users/personal/Desktop/Grad/update project/Graduation Project/backend/admin_server.py"],
+      "port": 5002
+    },
+    {
+      "name": "testai-server",
+      "runtimeExecutable": "/Users/personal/.pyenv/versions/3.12.8/bin/python3",
+      "runtimeArgs": ["/Users/personal/Desktop/Grad/testai/app.py"],
+      "port": 8080
+    }
+  ]
+}
