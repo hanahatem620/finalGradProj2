@@ -15,25 +15,8 @@ import {
 } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { FiPlus, FiSend } from 'react-icons/fi'
+import { Ticket } from '@/types/tickets.type'
 
-interface TicketMessage {
-  id: number
-  sender_type: 'CLIENT' | 'ADMIN'
-  sender_name: string | null
-  body: string
-  created_at: string
-}
-
-interface Ticket {
-  id: number
-  title: string | null
-  category: string
-  description: string
-  status: 'OPEN' | 'IN_PROGRESS' | 'CLOSED'
-  created_at: string
-  resolved_at: string | null
-  messages: TicketMessage[]
-}
 
 const statusTone: Record<string, string> = {
   OPEN: 'bg-red-100 text-red-600',
@@ -179,6 +162,7 @@ export default function HelpCenter() {
                 <div>
                   <label className='text-sm font-semibold'>Category</label>
                   <select
+                  aria-label="Choose a service"
                     value={nCategory}
                     onChange={e => setNCategory(e.target.value)}
                     className='w-full border border-gray-300 rounded-md p-2 text-sm'

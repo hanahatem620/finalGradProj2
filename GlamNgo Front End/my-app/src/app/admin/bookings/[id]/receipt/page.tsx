@@ -1,29 +1,31 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import { Booking } from '@/types/adminBookingReceipt.type'
 
-interface Item {
-  id: number
-  item_name: string | null
-  item_type: string | null
-  price_at_booking: number
-  addons_summary: string | null
-}
-interface Txn { id: number; method: string; amount: number; status: string }
-interface Booking {
-  id: number
-  client_email: string
-  client_name: string | null
-  provider_email: string
-  provider_name: string | null
-  start_datetime: string
-  end_datetime: string
-  status: string
-  total_price: number
-  created_at: string
-  items: Item[]
-  transactions: Txn[]
-}
+// interface Item {
+//   id: number
+//   item_name: string | null
+//   item_type: string | null
+//   price_at_booking: number
+//   addons_summary: string | null
+// }
+// interface Txn { id: number; method: string; amount: number; status: string }
+
+// interface Booking {
+//   id: number
+//   client_email: string
+//   client_name: string | null
+//   provider_email: string
+//   provider_name: string | null
+//   start_datetime: string
+//   end_datetime: string
+//   status: string
+//   total_price: number
+//   created_at: string
+//   items: Item[]
+//   transactions: Txn[]
+// }
 
 function fmtDT(s: string) {
   try {
@@ -116,7 +118,9 @@ export default function Receipt() {
           .receipt { box-shadow:none; }
         }
       `}</style>
-      <div className='receipt-wrap'>
+      
+      <div className='container lg:w-[80%] w-[90%] mx-auto py-10'>
+        <div className='receipt-wrap'>
         <div className='actions'>
           <button onClick={() => window.print()}>🖨 Print</button>
           <a className='secondary' href='javascript:window.close()'>Close</a>
@@ -193,7 +197,7 @@ export default function Receipt() {
               return <span key={i} className={cls} />
             })}
           </div>
-          <div style={{ textAlign:'center', fontSize:10, letterSpacing:3, color:'#333' }}>
+          <div className='text-center text-[10px] tracking-[3px] text-[#333]'>
             *GLMNGO{b.id.toString().padStart(6, '0')}*
           </div>
 
@@ -205,6 +209,7 @@ export default function Receipt() {
             <div className='stars'>✦ ✦ ✦</div>
           </div>
         </div>
+      </div>
       </div>
     </>
   )

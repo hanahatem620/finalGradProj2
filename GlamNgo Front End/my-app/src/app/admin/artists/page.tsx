@@ -4,18 +4,19 @@ import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { LuSearch } from 'react-icons/lu'
+import { Provider } from '@/types/providerService.type'
 
-interface Provider {
-  id: number
-  email: string
-  name: string
-  role: string
-  bio: string | null
-  location: string | null
-  image_url: string | null
-  status: string
-  services: { id: number; title: string; base_price: number }[]
-}
+// interface Provider {
+//   id: number
+//   email: string
+//   name: string
+//   role: string
+//   bio: string | null
+//   location: string | null
+//   image_url: string | null
+//   status: string
+//   services: { id: number; title: string; base_price: number }[]
+// }
 
 const cardVariants = {
   hidden: { opacity: 0, y: 12 },
@@ -44,7 +45,8 @@ export default function AdminArtists() {
   })
 
   return (
-    <div className='px-4 lg:px-8 py-8 space-y-6'>
+   <div className='container lg:w-[80%] w-[90%] mx-auto'>
+     <div className='px-4 lg:px-8 py-8 space-y-6'>
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,7 +94,7 @@ export default function AdminArtists() {
                     className='w-14 h-14 rounded-full object-cover'
                   />
                 ) : (
-                  <div className='w-14 h-14 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 text-white font-bold flex items-center justify-center text-xl'>
+                  <div className='w-14 h-14 rounded-full bg-linear-to-br from-pink-400 to-pink-500 text-white font-bold flex items-center justify-center text-xl'>
                     {p.name[0]?.toUpperCase()}
                   </div>
                 )}
@@ -136,5 +138,6 @@ export default function AdminArtists() {
         </div>
       )}
     </div>
+   </div>
   )
 }

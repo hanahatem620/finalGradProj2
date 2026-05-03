@@ -25,15 +25,13 @@ const HOME_TAB = { href: '/', label: 'Home', icon: MdHomeFilled }
 
 const ADMIN_TABS = [
   { href: '/admin/dashboard', label: 'Overview', icon: BiSolidCategoryAlt },
-  { href: '/admin/artists',   label: 'Artists',  icon: MdOutlinePalette },
-  { href: '/admin/bookings',  label: 'Bookings', icon: LuCalendarCheck2 },
+  // { href: '/admin/artists',   label: 'Artists',  icon: MdOutlinePalette },
+  // { href: '/admin/bookings',  label: 'Bookings', icon: LuCalendarCheck2 },
 ]
 
-// const CLIENT_TABS = [
-//   { href: '/artists',          label: 'Artists',   icon: MdOutlinePalette },
-//   { href: '/client/dashboard', label: 'Dashboard', icon: BiSolidCategoryAlt },
-//   { href: '/client/booking',   label: 'Bookings',  icon: LuCalendarCheck2 },
-// ]
+const CLIENT_TABS = [
+  { href: '/client/dashboard', label: 'Dashboard', icon: BiSolidCategoryAlt },
+]
 
 interface Tab { href: string; label: string; icon: any }
 
@@ -68,7 +66,7 @@ export default function Navbar() {
 
   // Which tabs to show on the left, based on role
   const tabs: Tab[] = session
-    ? [HOME_TAB, ...(isAdmin ? ADMIN_TABS :  [])]
+    ? [HOME_TAB, ...(isAdmin ? ADMIN_TABS : !isAdmin ? CLIENT_TABS :  [])]
     : []
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -88,14 +86,17 @@ export default function Navbar() {
     return () => window.removeEventListener('avatar-updated', h)
   }, [])
 
-  function logOut() { signOut({ callbackUrl: '/LogIn' }) }
+
+  function logOut() {
+     signOut({ callbackUrl: '/LogIn' }) 
+    }
   const initial = (session?.user?.name || session?.user?.email || '?')[0]?.toUpperCase()
 
   const ProfileMenu = (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild >
         <button
-          className='flex items-center gap-2 border border-pink-200 bg-pink-50/60 hover:bg-pink-100 rounded-full px-2 py-1 transition'
+          className='flex items-center gap-2 border border-pink-200 bg-pink-50/60 hover:bg-pink-100 rounded-full px-2 py-1 transition me-4'
           aria-label='Account menu'
         >
           <span className='w-8 h-8 rounded-full overflow-hidden bg-linear-to-br from-pink-400 to-pink-600 text-white font-bold flex items-center justify-center text-sm'>
@@ -115,22 +116,6 @@ export default function Navbar() {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-56'>
-        <DropdownMenuLabel>
-          <div className='text-xs text-gray-500 font-normal'>Signed in as</div>
-          <div className='truncate text-sm'>{session?.user?.email}</div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link
-              href={isAdmin ? '/admin/settings' : '/client/settings'}
-              className='flex items-center gap-2 w-full'
-            >
-              <UserIcon className='w-4 h-4' /> Profile &amp; Settings
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={logOut}
           className='text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer flex items-center gap-2'
@@ -157,7 +142,8 @@ export default function Navbar() {
             />
           </Link>
 
-          {tabs.length > 0 && (
+          <div className='flex'>
+            {tabs.length > 0 && (
             <ul className='hidden lg:flex items-center gap-1'>
               {tabs.map(t => (
                 <li key={t.href}>
@@ -166,6 +152,7 @@ export default function Navbar() {
               ))}
             </ul>
           )}
+          </div>
         </div>
 
         {/* Right: guest links OR profile menu */}
@@ -180,25 +167,25 @@ export default function Navbar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuGroup>
-                    <DropdownMenuItem asChild><Link href='/bookService'>Book a Service</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/offers'>Special offers</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
+                    {/* <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem> */}
                     <DropdownMenuItem asChild><Link href='/ourService'>Our services</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/howItWork'>How it works</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/contactUs'>Contact Us</Link></DropdownMenuItem>
+
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Link href='/artists' className='text-sm hover:text-pink-500'>Artists</Link>
               <Link href='/becomeAPro' className='text-sm hover:text-pink-500'>Become a Pro</Link>
-              <Link href='/LogIn'>
-                <Button variant='outline' className='border-pink-300 text-pink-600 hover:bg-pink-50'>
-                  Log in
-                </Button>
-              </Link>
-              <Link href='/LogIn'>
+              <Link href='/LogIn' className='text-sm hover:text-pink-500'>Sign In</Link>
+
+
+
+              <Link href='/bookService'>
                 <Button className='bg-linear-to-b from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'>
-                  Sign up
+                  Book a Service
                 </Button>
               </Link>
             </>
@@ -211,7 +198,7 @@ export default function Navbar() {
         <div className='md:hidden flex items-center gap-2'>
           {session ? ProfileMenu : (
             <Link href='/LogIn'>
-              <Button className='bg-pink-500 hover:bg-pink-600 text-white'>Log in</Button>
+              <Button className=' text-white'>Log in</Button>
             </Link>
           )}
           <button className='cursor-pointer' onClick={() => setOpen(!open)} aria-label='Menu'>
@@ -229,18 +216,38 @@ export default function Navbar() {
           ))}
           {!session && (
             <>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' className='border-0 shadow-none font-normal hover:bg-transparent'>
+                    Services <i className='fa-solid fa-angle-down ms-1' />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild><Link href='/bookService'>Book a Service</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/offers'>Special offers</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/ourService'>Our services</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/howItWork'>How it works</Link></DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Link href='/artists' onClick={() => setOpen(false)} className='block py-1'>Artists</Link>
-              <Link href='/ourService' onClick={() => setOpen(false)} className='block py-1'>Our Services</Link>
-              <Link href='/howItWork' onClick={() => setOpen(false)} className='block py-1'>How It Works</Link>
-              <Link href='/aiFeatures' onClick={() => setOpen(false)} className='block py-1'>AI Features</Link>
-              <div className='pt-2 flex gap-2'>
+               <Link href='/becomeAPro' className='text-sm hover:text-pink-500'>Become a Pro</Link>
+
+              {/* <Link href='/ourService' onClick={() => setOpen(false)} className='block py-1'>Our Services</Link>
+              <Link href='/howItWork' onClick={() => setOpen(false)} className='block py-1'>How It Works</Link> */}
+              {/* <Link href='/aiFeatures' onClick={() => setOpen(false)} className='block py-1'>AI Features</Link> */}
+              {/* <div className='pt-2 flex gap-2'>
                 <Link href='/LogIn' onClick={() => setOpen(false)} className='flex-1'>
                   <Button variant='outline' className='w-full border-pink-300 text-pink-600'>Log in</Button>
                 </Link>
                 <Link href='/LogIn' onClick={() => setOpen(false)} className='flex-1'>
                   <Button className='w-full bg-pink-500 hover:bg-pink-600 text-white'>Sign up</Button>
                 </Link>
-              </div>
+              </div> */}
             </>
           )}
           {session && (

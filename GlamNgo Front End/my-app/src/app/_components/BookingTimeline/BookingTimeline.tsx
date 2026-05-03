@@ -201,7 +201,7 @@ export default function BookingTimeline({
       {/* The track */}
       <div className='flex gap-3'>
         {/* Hour labels column */}
-        <div className='relative flex-shrink-0' style={{ width: 44, height: trackHeight }}>
+        <div className='relative shrink-0' style={{ width: 44, height: trackHeight }}>
           {ticks.map(h => (
             <div
               key={h}
@@ -262,7 +262,7 @@ export default function BookingTimeline({
             {/* Empty-state overlays */}
             {!loading && noSelection && (
               <div className='absolute inset-0 flex items-center justify-center pointer-events-none'>
-                <div className='bg-white/90 backdrop-blur rounded-lg border border-gray-200 px-4 py-3 text-center max-w-[240px] shadow-sm'>
+                <div className='bg-white/90 backdrop-blur rounded-lg border border-gray-200 px-4 py-3 text-center max-w-60 shadow-sm'>
                   <div className='text-sm font-semibold text-gray-700'>Pick a service</div>
                   <div className='text-xs text-gray-500 mt-0.5'>
                     Your time-block appears here once services are selected.
@@ -272,7 +272,7 @@ export default function BookingTimeline({
             )}
             {!loading && !noSelection && !hasAnySlot && (
               <div className='absolute inset-0 flex items-center justify-center pointer-events-none'>
-                <div className='bg-white/90 backdrop-blur rounded-lg border border-gray-200 px-4 py-3 text-center max-w-[240px] shadow-sm'>
+                <div className='bg-white/90 backdrop-blur rounded-lg border border-gray-200 px-4 py-3 text-center max-w-60 shadow-sm'>
                   <div className='text-sm font-semibold text-gray-700'>No slot fits today</div>
                   <div className='text-xs text-gray-500 mt-0.5'>
                     Try another date or fewer services.
@@ -297,7 +297,7 @@ export default function BookingTimeline({
                 initial={false}
                 animate={{ top: yForMin(startMin) }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                className='absolute left-2 right-2 rounded-md cursor-grab active:cursor-grabbing shadow-md ring-2 ring-pink-300 bg-gradient-to-b from-pink-500 to-pink-600 flex flex-col items-center justify-center text-white font-semibold overflow-hidden px-2'
+                className='absolute left-2 right-2 rounded-md cursor-grab active:cursor-grabbing shadow-md ring-2 ring-pink-300 bg-linear-to-b from-pink-500 to-pink-600 flex flex-col items-center justify-center text-white font-semibold overflow-hidden px-2'
                 style={{ height: trueBarHeight }}
               >
                 {labelInside && (
@@ -354,7 +354,7 @@ export default function BookingTimeline({
               keep the track at full width. */}
           {!loading && hasAnySlot && !labelInside && (selectionValid || suggestedStart !== null) && (
             <div
-              className='relative flex-shrink-0'
+              className='relative shrink-0'
               style={{ width: 110, height: trackHeight }}
             >
               {selectionValid && (
@@ -371,7 +371,7 @@ export default function BookingTimeline({
       {/* Horizontal legend below the track */}
       <div className='flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500 pl-14'>
         <span className='flex items-center gap-1.5'>
-          <span className='inline-block w-3 h-3 rounded-sm bg-gradient-to-b from-pink-500 to-pink-600' />
+          <span className='inline-block w-3 h-3 rounded-sm bg-linear-to-b from-pink-500 to-pink-600' />
           Your pick · drag me
         </span>
         <span className='flex items-center gap-1.5'>

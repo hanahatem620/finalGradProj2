@@ -41,7 +41,7 @@ export default function HowItWorks() {
   return (
     <div className='py-4 bg-white'>
       <div className='container lg:w-[90%] mx-auto md:w-[90%]'>
-        <div className='flex flex-wrap flex-col md:flex-row items-stretch gap-7 p-10'>
+        <div className='flex flex-wrap flex-col lg:flex-row  lg:items-stretch items-center gap-7 p-10'>
           {steps.map((s, i) => (
             <motion.div
               key={s.n}
@@ -51,7 +51,7 @@ export default function HowItWorks() {
               viewport={{ once: true, amount: 0.3 }}
               custom={i}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25 } }}
-              className='howItCard bg-gradient-to-tl from-purple-50 to-pink-50 relative flex-1 w-3xs px-5 py-12 rounded-2xl flex flex-col gap-3 shadow-sm hover:shadow-xl transition-shadow'
+              className='howItCard bg-linear-to-tl from-purple-50 to-pink-50 relative flex-1 w-3xs px-5 py-12 rounded-2xl flex flex-col gap-3 shadow-sm hover:shadow-xl transition-shadow'
             >
               <motion.div
                 initial={{ scale: 0, rotate: -90 }}
@@ -69,7 +69,7 @@ export default function HowItWorks() {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + i * 0.1, type: 'spring', stiffness: 200 }}
-                className='absolute -top-6 -left-2 bg-gradient-to-b from-pink-400 to-pink-500 px-4 py-2 rounded-full shadow shadow-gray-500'
+                className='absolute -top-6 -left-2 bg-linear-to-b from-pink-400 to-pink-500 px-4 py-2 rounded-full shadow shadow-gray-500'
               >
                 <p className='text-white font-semibold'>{s.n}</p>
               </motion.div>

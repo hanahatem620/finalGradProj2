@@ -13,38 +13,39 @@ import { toast } from 'sonner'
 import {
   LuArrowLeft, LuReceipt, LuTrash2, LuTag, LuDollarSign, LuCreditCard,
 } from 'react-icons/lu'
+import { Booking } from '@/types/adminBookingReceipt.type'
 
-interface Txn {
-  id: number
-  method: string
-  amount: number
-  status: string
-  created_at: string
-}
-interface Item {
-  id: number
-  item_type: string | null
-  item_name: string | null
-  price_at_booking: number
-  addons_summary: string | null
-}
-interface Booking {
-  id: number
-  client_id: number
-  client_email: string
-  client_name: string | null
-  provider_id: number
-  provider_email: string
-  provider_name: string | null
-  provider_image?: string | null
-  start_datetime: string
-  end_datetime: string
-  status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
-  total_price: number
-  created_at: string
-  items: Item[]
-  transactions: Txn[]
-}
+// interface Txn {
+//   id: number
+//   method: string
+//   amount: number
+//   status: string
+//   created_at: string
+// }
+// interface Item {
+//   id: number
+//   item_type: string | null
+//   item_name: string | null
+//   price_at_booking: number
+//   addons_summary: string | null
+// }
+// interface Booking {
+//   id: number
+//   client_id: number
+//   client_email: string
+//   client_name: string | null
+//   provider_id: number
+//   provider_email: string
+//   provider_name: string | null
+//   provider_image?: string | null
+//   start_datetime: string
+//   end_datetime: string
+//   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
+//   total_price: number
+//   created_at: string
+//   items: Item[]
+//   transactions: Txn[]
+// }
 
 const statusTone: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',
@@ -216,7 +217,9 @@ export default function AdminBookingDetail() {
   }
 
   return (
-    <div className='px-4 lg:px-8 py-8 space-y-6'>
+   <>
+   <div className='container lg:w-[80%] w-[90%] mx-auto py-10'>
+     <div className='px-4 lg:px-8 py-8 space-y-6'>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -6 }}
@@ -237,7 +240,7 @@ export default function AdminBookingDetail() {
           {/* Status updater — always visible so admins can reverse a wrong
               cancellation or revert a too-early completion. */}
           <div className='flex items-center gap-1 bg-white border border-gray-200 rounded-md p-1'>
-            <select
+            <select aria-label="Booking status"
               value={pendingStatus}
               onChange={e => setPendingStatus(e.target.value)}
               className='text-sm bg-transparent outline-none px-2 py-1'
@@ -491,5 +494,8 @@ export default function AdminBookingDetail() {
         </DialogContent>
       </Dialog>
     </div>
+   </div>
+   
+   </>
   )
 }

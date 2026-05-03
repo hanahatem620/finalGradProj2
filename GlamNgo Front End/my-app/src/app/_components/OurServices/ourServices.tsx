@@ -91,9 +91,10 @@ export default function OurServices() {
 
       <CardFooter className="flex justify-between">
         <p className="text-pink-500 font-bold ms-10 text-xl">From 500 EGP</p>
-        <Button variant="outline" size="sm" className=" border-pink-500 cursor-pointer hover:text-pink-500 hover:bg-white text-pink-500 rounded-full">
-          Book Now
-        </Button>
+
+        <div className="w-fit">
+          <ServiceBookingBtn title="Book Now" />
+        </div>
       </CardFooter>
     </Card>
 
@@ -123,43 +124,14 @@ export default function OurServices() {
 
       <CardFooter className="flex justify-between">
         <p className="text-pink-500 font-bold ms-10 text-xl">From 600 EGP</p>
-        <Button variant="outline" size="sm" className=" border-pink-500 cursor-pointer hover:text-pink-500 hover:bg-white text-pink-500 rounded-full">
-          Book Now
-        </Button>
+      <div className="w-fit">
+          <ServiceBookingBtn title="Book Now" />
+        </div>
+
       </CardFooter>
     </Card>
 
-      <Card  className="w-full max-w-sm bg-linear-to-r from-pink-50  to-purple-50 shadow border-0">
-      <CardHeader className="flex items-center">
-
-        <div className="bg-linear-to-b from-pink-400 to-pink-500 p-3 rounded-xl">
-            <FaRegHand className="text-2xl text-white"/>
-        </div>
-
-        <div className="servText">
-            <CardTitle className="mb-1">Manicure & Pedicure</CardTitle>
-        <CardDescription>
-        Professional nail care and design
-        </CardDescription>
-        </div>
-
-      </CardHeader>
-      <CardContent>
-        <ul className="list-disc text-pink-500 ms-15">
-            <li><span className="text-gray-500">Gel polish</span></li>
-            <li><span className="text-gray-500">Nail art</span></li>
-            <li><span className="text-gray-500">Spa treatment</span></li>
-            <li><span className="text-gray-500">French tips</span></li>
-        </ul>
-      </CardContent>
-
-      <CardFooter className="flex justify-between">
-        <p className="text-pink-500 font-bold ms-10 text-xl">From 250 EGP</p>
-        <Button variant="outline" size="sm" className=" border-pink-500 cursor-pointer hover:text-pink-500 hover:bg-white text-pink-500 rounded-full">
-          Book Now
-        </Button>
-      </CardFooter>
-    </Card>
+  
 
 
       </div>

@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { LuPalette } from "react-icons/lu";
 import { PiShareNetworkBold } from "react-icons/pi";
 import AiBtn from "../AIBtn/AiBtn";
+import Image from "next/image";
+import hero from '../../../../public/images/hero.jpg'
 
 
 
@@ -16,17 +18,20 @@ export default function HeaderSearch() {
   return (
     <>
 
-       <div className="py-18 bg-linear-to-r from-pink-100 to-purple-100">
-          <div className="head text-center flex justify-center flex-col">
+    <div>
+              <div className="relative">
+      <div>
+            <Image src={hero} width={500} height={500} className="w-full object-cover h-screen aspect-square" alt="hero"/>
+      </div>  
+  <div className="absolute inset-0 bg-black/40"></div>
 
-        <h1 className='text-4xl font-bold'>Beauty Delivered to You</h1>
-        <p className='text-gray-600 max-w-145 mx-auto mt-3'>Book top-rated hair & makeup artists near you for weddings, events, or just because you deserve it.</p>
+  <div className="absolute top-0 right-0 left-0 flex flex-col items-center justify-center h-full text-white text-center">
+    <h1 className="lg:text-4xl font-bold">Beauty Delivered to You</h1>
+    <p className="mt-4 text-sm">Book top-rated hair & makeup artists near you for weddings, events, or just because you deserve it.</p>
+  </div>
 
-        <Command className="max-w-sm mx-auto rounded-lg border border-pink-200 mt-3">
-      <CommandInput placeholder="Search for artists, services, or locations..." />
-      </Command>
-        </div>
-       </div>
+</div>
+    </div>
 
    <div className="bg-white p-1">
      <div className="container w-full mx-auto">

@@ -35,7 +35,7 @@ import PaymentMethod from "../_components/BookingSteps/PaymentMethod";
 
 
 
-export default function appointBooking() {
+export default function AppointBooking() {
 
     const [step , setStep] = useState(1);
   

@@ -30,7 +30,7 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
   return (
     <>
     
-   {open &&  <Button onClick={()=> setOpen(false)} className='md:hidden absolute top-4 right-3 z-50 cursor-pointer'>
+   {open &&  <Button onClick={()=> setOpen(false)} className='md:hidden fixed top-4 right-3 z-50 cursor-pointer'>
         <IoCloseSharp/>
     </Button>}
 
@@ -51,12 +51,12 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
               </Link>
             </li>
 
-            <li>
+            {/* <li>
               <Link href={'/client/schedule'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <LuCalendarCheck2 className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">My Schedule</span>
               </Link>
-            </li>
+            </li> */}
 
             <li>
               <Link href={'/client/notifications'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
@@ -99,18 +99,6 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
               </Link>
             </li>
 
-            <li>
-                    <Separator className='bg-gray-200' />
-
-            </li>
-
-            <li>
-              <Link href={'#'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                    <p className='bg-pink-300 p-2 rounded-full text-pink-500 '>HH</p>
-                <span className="flex-1 ms-3 whitespace-nowrap">Hana Hatem</span>
-              </Link>
-            </li>
-           
           </ul>
         </div>
       </aside>

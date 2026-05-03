@@ -8,25 +8,14 @@ import { Button } from '@/components/ui/button'
 import { FiClock } from 'react-icons/fi'
 import { LuCalendarCheck2 } from 'react-icons/lu'
 import { toast } from 'sonner'
+import { BookingRow } from '@/types/bookingRow.type'
 
-interface BookingRow {
-  id: number
-  provider_id: number
-  provider_name: string
-  provider_role: string
-  provider_image: string | null
-  start_datetime: string
-  end_datetime: string
-  status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
-  total_price: number
-  reviewed: boolean
-}
 
 const statusStyle: Record<string, string> = {
-  PENDING: 'text-yellow-600 bg-yellow-100',
-  CONFIRMED: 'text-green-600 bg-green-100',
-  COMPLETED: 'text-blue-600 bg-blue-100',
-  CANCELLED: 'text-red-600 bg-red-100',
+  PENDING:   'text-yellow-600 bg-yellow-100 py-1 px-4 h-fit',
+  CONFIRMED: 'text-green-600 bg-green-100 py-1 px-4 h-fit',
+  COMPLETED: 'text-green-600 bg-green-100 py-1 px-4 h-fit',
+  CANCELLED: 'text-red-600 bg-red-100 py-1 px-4 h-fit',
 }
 
 function fmtDate(s: string) {
@@ -80,7 +69,7 @@ function BookingCard({ b, idx, onCancel }: {
               className='rounded-full object-cover aspect-square'
             />
           ) : (
-            <div className='w-[50px] h-[50px] rounded-full bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-white font-bold'>
+            <div className='w-12.5 h-12.5 rounded-full bg-linear-to-br from-pink-300 to-pink-500 flex items-center justify-center text-white font-bold'>
               {b.provider_name[0]?.toUpperCase()}
             </div>
           )}
@@ -119,9 +108,9 @@ function BookingCard({ b, idx, onCancel }: {
             <Link href='/client/messageArtist'>
               <Button className='bg-pink-500 hover:bg-pink-600'>Message Artist</Button>
             </Link>
-            <Link href='/client/rescheduleAppointment'>
+            {/* <Link href='/client/rescheduleAppointment'>
               <Button variant='outline'>Reschedule</Button>
-            </Link>
+            </Link> */}
             <Button
               variant='outline'
               className='border-red-200 text-red-600 hover:bg-red-50'
@@ -187,22 +176,44 @@ export default function ClientBooking() {
 
   useEffect(() => { load() }, [])
 
-  async function cancel(id: number) {
-    if (!confirm('Cancel this booking?')) return
-    const res = await fetch(`/api/bookings/${id}/cancel`, { method: 'POST' })
-    if (res.ok) {
-      toast.success('Booking cancelled', { position: 'top-center' })
-      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'CANCELLED' } : b))
-    } else {
-      const err = await res.json().catch(() => ({}))
-      toast.error(err.msg || 'Failed to cancel', { position: 'top-center' })
-    }
-  }
+ function cancel(id: number) {
+  toast("Cancel this booking?", {
+    position: "top-center",
+
+    action: {
+      label: "Yes",
+      onClick: async () => {
+        try {
+          const res = await fetch(`/api/bookings/${id}/cancel`, {
+            method: "POST",
+          });
+
+          if (res.ok) {
+            toast.success("Booking cancelled", { position: "top-center" });
+
+            setBookings(prev =>
+              prev.map(b =>
+                b.id === id ? { ...b, status: "CANCELLED" } : b
+              )
+            );
+          } else {
+            const err = await res.json().catch(() => ({}));
+            toast.error(err.msg || "Failed to cancel", {
+              position: "top-center",
+            });
+          }
+        } catch (e) {
+          toast.error("Something went wrong", { position: "top-center" });
+        }
+      },
+    },
+  });
+}
 
   const now = Date.now()
   const upcoming = bookings.filter(b =>
     (b.status === 'PENDING' || b.status === 'CONFIRMED')
-    && new Date(b.end_datetime).getTime() >= now
+    && new Date(b.end_datetime)
   )
   const completed = bookings.filter(b => b.status === 'COMPLETED')
   const cancelled = bookings.filter(b => b.status === 'CANCELLED')

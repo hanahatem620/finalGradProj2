@@ -8,16 +8,17 @@ import { Button } from '@/components/ui/button'
 import { FaStar } from 'react-icons/fa6'
 import { CiStar } from 'react-icons/ci'
 import { toast } from 'sonner'
+import { BookingRow } from '@/types/bookingRow.type'
 
-interface BookingRow {
-  id: number
-  provider_id: number
-  provider_name: string
-  provider_image: string | null
-  start_datetime: string
-  status: string
-  reviewed: boolean
-}
+// interface BookingRow {
+//   id: number
+//   provider_id: number
+//   provider_name: string
+//   provider_image: string | null
+//   start_datetime: string
+//   status: string
+//   reviewed: boolean
+// }
 
 function LeaveReviewInner() {
   const router = useRouter()
@@ -112,7 +113,7 @@ function LeaveReviewInner() {
                       className='rounded-full object-cover aspect-square'
                     />
                   ) : (
-                    <div className='w-[50px] h-[50px] rounded-full bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-white font-bold text-xl'>
+                    <div className='w-12.5 h-12.5 rounded-full bg-linear-to-br from-pink-300 to-pink-500 flex items-center justify-center text-white font-bold text-xl'>
                       {booking.provider_name[0]?.toUpperCase()}
                     </div>
                   )}
@@ -190,7 +191,7 @@ function LeaveReviewInner() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.15 }}
         >
-          <div className='bg-gradient-to-br from-pink-300 to-pink-400 p-5 flex flex-col gap-3 rounded-xl text-white'>
+          <div className='bg-linear-to-br from-pink-300 to-pink-400 p-5 flex flex-col gap-3 rounded-xl text-white'>
             <h2 className='font-bold text-lg'>Earn Points!</h2>
             <p className='text-white/90 max-w-xs'>
               Leave a review and earn 10 bonus loyalty points

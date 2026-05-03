@@ -7,27 +7,9 @@ import Link from 'next/link'
 import { LuUsers, LuCalendarCheck2 } from 'react-icons/lu'
 import { FaStar, FaMoneyBillWave } from 'react-icons/fa6'
 import { HiOutlineUsers } from 'react-icons/hi2'
+import { AdminBooking, DashStats } from '@/types/adminBooking.type'
+import { LuPalette } from "react-icons/lu";
 
-interface DashStats {
-  total_users: number
-  total_clients: number
-  total_providers: number
-  total_bookings: number
-  total_revenue: number
-}
-
-interface AdminBooking {
-  id: number
-  client_id: number
-  client_name: string | null
-  client_email: string
-  provider_id: number
-  provider_name: string | null
-  provider_email: string
-  start_datetime: string
-  status: string
-  total_price: number
-}
 
 const statusTone: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',
@@ -68,11 +50,12 @@ export default function AdminDashboard() {
   }, [])
 
   const cards = [
-    { label: 'Total Users', value: stats?.total_users ?? '…', icon: <LuUsers />, bg: 'from-pink-400 to-pink-500' },
-    { label: 'Clients', value: stats?.total_clients ?? '…', icon: <HiOutlineUsers />, bg: 'from-purple-400 to-purple-500' },
-    { label: 'Providers', value: stats?.total_providers ?? '…', icon: <FaStar />, bg: 'from-amber-400 to-amber-500' },
-    { label: 'Bookings', value: stats?.total_bookings ?? '…', icon: <LuCalendarCheck2 />, bg: 'from-blue-400 to-blue-500' },
-    { label: 'Revenue', value: stats ? `EGP ${stats.total_revenue.toFixed(0)}` : '…', icon: <FaMoneyBillWave />, bg: 'from-emerald-400 to-emerald-500' },
+    { label: 'Total Artists', value: stats?.total_providers ?? '…', icon: <LuPalette />, },
+    { label: 'Total Users', value: stats?.total_users ?? '…', icon: <LuUsers />, },
+    { label: 'Clients', value: stats?.total_clients ?? '…', icon: <HiOutlineUsers />,  },
+    // { label: 'Providers', value: stats?.total_providers ?? '…', icon: <FaStar />, bg: 'from-amber-400 to-amber-500' },
+    { label: 'Bookings', value: stats?.total_bookings ?? '…', icon: <LuCalendarCheck2 />,  },
+    { label: 'Revenue', value: stats ? `EGP ${stats.total_revenue.toFixed(0)}` : '…', icon: <FaMoneyBillWave />,  },
   ]
 
   const now = Date.now()
@@ -85,21 +68,26 @@ export default function AdminDashboard() {
     : 0
 
   return (
-    <div className='px-4 lg:px-8 py-8 space-y-6'>
+
+    <>
+   <div>
+     <div className='container lg:w-[80%] w-[90%] mx-auto py-10'>
+      <div className='flex flex-wrap flex-col gap-4'>
+        
       {/* Header — left aligned */}
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h1 className='text-3xl font-bold tracking-tight'>Dashboard</h1>
-        <p className='text-gray-500 text-sm mt-1'>
-          Welcome back, <span className='font-semibold text-gray-700'>{session?.user?.name || 'Admin'}</span> — here&apos;s what&apos;s happening today.
+        <h1 className='text-3xl font-bold'>Dashboard</h1>
+        <p className='text-pink-500  mt-1'>
+          Here's what's happening today in your business
         </p>
       </motion.div>
 
       {/* Stat cards */}
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+      <div className='flex flex-wrap gap-4 '>
         {cards.map((c, i) => (
           <motion.div
             key={c.label}
@@ -108,14 +96,14 @@ export default function AdminDashboard() {
             animate='visible'
             custom={i}
             whileHover={{ y: -4 }}
-            className={`rounded-xl p-4 bg-gradient-to-br ${c.bg} text-white shadow-lg`}
+            className={`rounded-xl p-5 shadow-lg`}
           >
             <div className='flex items-start justify-between'>
               <div>
-                <div className='text-xs opacity-90 uppercase tracking-wide'>{c.label}</div>
+                <div className='text-xs opacity-90 uppercase '>{c.label}</div>
                 <div className='text-2xl font-bold mt-1'>{c.value}</div>
               </div>
-              <div className='text-2xl opacity-80'>{c.icon}</div>
+              <div className='text-2xl ms-1 bg-pink-200 p-2 rounded-md text-pink-500'>{c.icon}</div>
             </div>
           </motion.div>
         ))}
@@ -126,20 +114,22 @@ export default function AdminDashboard() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.4 }}
-        className='grid grid-cols-1 md:grid-cols-3 gap-4'
+        className='flex flex-wrap lg:flex-row flex-col gap-4'
       >
-        <div className='bg-white rounded-xl p-5 border border-gray-100 shadow-sm'>
-          <div className='text-xs text-gray-500 uppercase tracking-wide'>Pending today</div>
+        <div className='pendings bg-white rounded-xl p-5 border border-gray-100 shadow-sm lg:flex-1 w-md '>
+          <div className='text-xs text-gray-500 uppercase'>Pending today</div>
           <div className='text-3xl font-bold text-yellow-600 mt-1'>{pendingCount}</div>
           <div className='text-xs text-gray-400'>awaiting confirmation</div>
         </div>
-        <div className='bg-white rounded-xl p-5 border border-gray-100 shadow-sm'>
-          <div className='text-xs text-gray-500 uppercase tracking-wide'>Upcoming</div>
+
+        <div className='upcoming bg-white rounded-xl p-5 border border-gray-100 shadow-sm lg:flex-1 w-md'>
+          <div className='text-xs text-gray-500 uppercase'>Upcoming</div>
           <div className='text-3xl font-bold text-green-600 mt-1'>{upcomingCount}</div>
           <div className='text-xs text-gray-400'>appointments ahead</div>
         </div>
-        <div className='bg-white rounded-xl p-5 border border-gray-100 shadow-sm'>
-          <div className='text-xs text-gray-500 uppercase tracking-wide'>Avg. booking value</div>
+
+        <div className='avgBook bg-white rounded-xl p-5 border border-gray-100 shadow-sm lg:flex-1 w-md'>
+          <div className='text-xs text-gray-500 uppercase'>Avg. booking value</div>
           <div className='text-3xl font-bold text-pink-500 mt-1'>
             {avgValue ? `EGP ${avgValue.toFixed(0)}` : '—'}
           </div>
@@ -152,7 +142,7 @@ export default function AdminDashboard() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.45 }}
-        className='bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden'
+        className='rounded-xl border border-gray-100 shadow-sm lg:w-full w-md'
       >
         <div className='px-5 py-3 border-b border-gray-100 flex items-center justify-between'>
           <h2 className='font-bold text-lg'>Recent Bookings</h2>
@@ -168,7 +158,7 @@ export default function AdminDashboard() {
           ) : bookings.length === 0 ? (
             <div className='p-10 text-center text-gray-500'>No bookings yet.</div>
           ) : (
-            <table className='w-full text-sm'>
+            <table className='lg:w-full  text-sm'>
               <thead className='bg-gray-50 text-gray-600 text-xs uppercase'>
                 <tr>
                   <th className='px-4 py-2 text-left'>#</th>
@@ -204,5 +194,9 @@ export default function AdminDashboard() {
         </div>
       </motion.div>
     </div>
+    </div>
+   </div>
+    
+    </>
   )
 }

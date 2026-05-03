@@ -38,7 +38,8 @@ export default function LogIn() {
     defaultValues:{
       name:"",
       email:"",
-      password:""
+      password:"",
+      phone:""
     }, resolver:zodResolver(signUpSchema)
   });
 
@@ -273,6 +274,22 @@ axios.post("/api/auth/register" , values).then((res) => {
             )}
           />
         </FieldGroup>  
+
+         <FieldGroup>
+          <Controller
+            name="phone"
+            control={signUpForm.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Phone:</FieldLabel>
+                <Input {...field} autoComplete="on" type="tel" placeholder='Phone Number'/>
+                {fieldState.error && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup> 
       
         <Button  className='bg-pink-500 hover:bg-pink-500 w-full font-bold text-white cursor-pointer'>Create an account</Button>    
         </form>

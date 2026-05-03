@@ -5,20 +5,21 @@ import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { LuSearch } from 'react-icons/lu'
+import { AdminBooking } from '@/types/adminBooking.type'
 
-interface AdminBooking {
-  id: number
-  client_id: number
-  client_name: string | null
-  client_email: string
-  provider_id: number
-  provider_name: string | null
-  provider_email: string
-  start_datetime: string
-  end_datetime: string
-  status: string
-  total_price: number
-}
+// interface AdminBooking {
+//   id: number
+//   client_id: number
+//   client_name: string | null
+//   client_email: string
+//   provider_id: number
+//   provider_name: string | null
+//   provider_email: string
+//   start_datetime: string
+//   end_datetime: string
+//   status: string
+//   total_price: number
+// }
 
 const statusTone: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',
@@ -68,6 +69,8 @@ export default function AdminBookings() {
   })
 
   return (
+  <>
+  <div className='container lg:w-[80%] w-[90%] mx-auto py-10'>
     <div className='px-4 lg:px-8 py-8 space-y-6'>
       <motion.div
         initial={{ opacity: 0, y: -6 }}
@@ -101,7 +104,7 @@ export default function AdminBookings() {
             </button>
           ))}
         </div>
-        <div className='flex-1 min-w-[220px] relative'>
+        <div className='flex-1 min-w-55 relative'>
           <LuSearch className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
           <Input
             value={q}
@@ -180,5 +183,7 @@ export default function AdminBookings() {
         </div>
       </motion.div>
     </div>
+  </div>
+  </>
   )
 }

@@ -1,20 +1,14 @@
 'use client'
 import Link from 'next/link'
-import { RiHashtag } from "react-icons/ri";
-import { CiCalendar } from "react-icons/ci";
 import { LuCalendarCheck2 } from "react-icons/lu";
-import { IoBookOutline } from "react-icons/io5";
-import { MdFavoriteBorder } from "react-icons/md";
-import { LuCreditCard } from "react-icons/lu";
-import { BsGear } from "react-icons/bs";
-import { RxQuestionMarkCircled } from "react-icons/rx";
-import { Separator } from "@/components/ui/separator"
-import { GiHamburgerMenu } from "react-icons/gi";
-import { useState } from 'react';
 import { IoCloseSharp } from "react-icons/io5";
 import { Button } from '@/components/ui/button';
 import { BiSolidCategoryAlt } from "react-icons/bi";
 import { MdOutlinePalette } from "react-icons/md";
+import { IoTicketOutline } from "react-icons/io5";
+import { MdOutlineCreditCard } from "react-icons/md";
+
+
 
 
 type AsideNavProps = {
@@ -26,7 +20,7 @@ type AsideNavProps = {
 
 
 
-export default function AsideNav({open , setOpen} : AsideNavProps) {
+export default function AsideNavAdmin({open , setOpen} : AsideNavProps) {
 
 
 
@@ -34,7 +28,7 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
   return (
     <>
     
-   {open &&  <Button onClick={()=> setOpen(false)} className='md:hidden absolute top-4 right-3 z-50 cursor-pointer'>
+   {open &&  <Button onClick={()=> setOpen(false)} className='md:hidden fixed  top-4 right-3 z-50 cursor-pointer'>
         <IoCloseSharp/>
     </Button>}
 
@@ -56,66 +50,29 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
             </li>
 
             <li>
-              <Link href={'/admin/booking'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+              <Link href={'/admin/bookings'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <LuCalendarCheck2 className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
               </Link>
             </li>
 
-            {/* <li>
-              <Link href={'/client/notifications'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                <IoBookOutline className='text-xl'/>
-                <span className="flex-1 ms-3 whitespace-nowrap">Notifications</span>
-              </Link>
-            </li>
-
             <li>
-              <Link href={'/client/favorites'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                    <MdFavoriteBorder className='text-xl'/>
-                <span className="flex-1 ms-3 whitespace-nowrap">Favorites</span>
-              </Link>
-            </li>
-
-            <li>
-              <Link href={'/client/payment'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                    <LuCreditCard className='text-xl'/>
+              <Link href={'/admin/payment'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                    <MdOutlineCreditCard className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Payments</span>
               </Link>
-            </li> */}
+            </li>
+
+             <li>
+              <Link href={'/admin/tickets'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                    <IoTicketOutline className='text-xl'/>
+                <span className="flex-1 ms-3 whitespace-nowrap">Tickets</span>
+              </Link>
+            </li>
+
+            
           </ul>
 
-           <ul className="space-y-2 font-medium">
-            <li>
-                <p className='text-gray-500 text-xs ms-3'>SUPPORT</p>
-            </li>
-
-            <li>
-              <Link href={'#'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-pink-300 hover:text-fg-brand group">
-                <BsGear className='text-xl'/>
-                <span className="ms-3">Settings</span>
-              </Link>
-            </li>
-
-            <li>
-              <Link href={'#'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                <RxQuestionMarkCircled className='text-xl'/>
-                <span className="flex-1 ms-3 whitespace-nowrap">Help center</span>
-              </Link>
-            </li>
-
-            <li>
-                    <Separator className='bg-gray-200' />
-
-            </li>
-
-            <li>
-              <Link href={'#'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                    <p className='bg-pink-300 p-2 rounded-full text-pink-500 '>HH</p>
-                <span className="flex-1 ms-3 whitespace-nowrap">Hana Hatem</span>
-              </Link>
-            </li>
-           
-          </ul>
         </div>
       </aside>
     

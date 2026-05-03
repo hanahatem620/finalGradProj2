@@ -3,7 +3,6 @@ import Credentials from 'next-auth/providers/credentials';
 import { getUserByEmail } from '@/lib/db';
 import { verifyWerkzeugHash } from '@/lib/password';
 
-// Dev bootstrap admin — mirrors the original Flask EMPLOYEES entry so a
 // fresh SQLite file always has an immediately-usable Manager login.
 const HARDCODED_ADMIN = {
     email: 'admin@glamngo.com',

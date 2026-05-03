@@ -35,7 +35,7 @@ const columns: Col[] = [
     title: 'Support',
     items: [
       { label: 'Help Center', href: '/client/helpCenter' },
-      { label: 'Contact Us', href: 'mailto:support@glamngo.com' },
+      { label: 'Contact Us', href: '/contactUs' },
       { label: 'Privacy Policy', href: '#' },
       { label: 'Terms of Service', href: '#' },
     ],
@@ -54,26 +54,7 @@ export default function HomeFooter() {
             <p className='text-slate-300 max-w-xs text-sm'>
               Book top-rated hair &amp; makeup artists for weddings, events, and everyday glam.
             </p>
-            {!session ? (
-              <div className='flex gap-2 mt-2'>
-                <Link href='/LogIn'>
-                  <Button variant='outline' className='border-slate-600 text-white bg-transparent hover:bg-white/10'>
-                    Log in
-                  </Button>
-                </Link>
-                <Link href='/LogIn'>
-                  <Button className='bg-pink-500 hover:bg-pink-600 text-white'>
-                    Sign up
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <Link href='/client/dashboard' className='mt-2'>
-                <Button className='bg-pink-500 hover:bg-pink-600 text-white'>
-                  Go to dashboard
-                </Button>
-              </Link>
-            )}
+           
           </div>
 
           {columns.map(col => (

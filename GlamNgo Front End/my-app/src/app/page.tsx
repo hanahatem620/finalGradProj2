@@ -7,6 +7,7 @@ import Artists from "./artists/page";
 import HowItWorks from "./_components/HowItWorks/howItWorks";
 import GetStart from "./_components/GetStart/getStart";
 import HomeFooter from "./_components/HomeFooter/homeFooter";
+import ChatBot from "./_components/ChatBot/ChatBot";
 
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
 <GetStart/>
 
 <HomeFooter/>
+<ChatBot/>
    
    </>
   );

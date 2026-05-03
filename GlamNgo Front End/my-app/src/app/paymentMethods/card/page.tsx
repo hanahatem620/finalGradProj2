@@ -2,15 +2,11 @@
 import { LuCreditCard } from "react-icons/lu";
 import { BsPaypal } from "react-icons/bs";
 import { FaApplePay } from "react-icons/fa";
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSeparator,
   FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -26,7 +22,11 @@ import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link";
 
 
-export default function Card() {
+export default function Card({ onClose, bookingData }:any) {
+
+
+
+  
   return (
     <>
     <div className='bg-white min-h-screen'>

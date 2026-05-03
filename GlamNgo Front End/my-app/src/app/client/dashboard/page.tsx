@@ -9,25 +9,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { getUser } from '@/profileActions/getUser.action'
 import type { User } from '@/types/user.type'
-
-interface BookingRow {
-  id: number
-  provider_id: number
-  provider_name: string
-  provider_role: string
-  provider_image: string | null
-  start_datetime: string
-  end_datetime: string
-  status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
-  total_price: number
-  reviewed: boolean
-}
+import { BookingRow } from '@/types/bookingRow.type'
 
 const statusColor: Record<string, string> = {
-  PENDING: 'text-yellow-600 bg-yellow-100',
-  CONFIRMED: 'text-green-600 bg-green-100',
-  COMPLETED: 'text-blue-600 bg-blue-100',
-  CANCELLED: 'text-red-600 bg-red-100',
+  PENDING:   'text-yellow-600 bg-yellow-100 py-1 px-4 h-fit',
+  CONFIRMED: 'text-green-600 bg-green-100 py-1 px-4 h-fit',
+  COMPLETED: 'text-green-600 bg-green-100 py-1 px-4 h-fit',
+  CANCELLED: 'text-red-600 bg-red-100 py-1 px-4 h-fit'
 }
 
 function formatDate(s: string) {
@@ -79,8 +67,7 @@ export default function ClientDashboard() {
 
   const now = Date.now()
   const upcoming = bookings.filter(b =>
-    new Date(b.start_datetime).getTime() >= now
-    && (b.status === 'PENDING' || b.status === 'CONFIRMED')
+   (b.status === 'PENDING' || b.status === 'CONFIRMED')
   ).slice(0, 4)
   const history = bookings.filter(b => b.status === 'COMPLETED' || b.status === 'CANCELLED')
                           .slice(0, 4)

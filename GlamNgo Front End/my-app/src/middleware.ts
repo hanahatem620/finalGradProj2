@@ -18,13 +18,13 @@ export async function middleware(request : NextRequest){
             const role = token.role
 
         if (pathname.startsWith("/client") && role !== "client")
-      return NextResponse.redirect(new URL("/client/dashboard", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
 
     if (pathname.startsWith("/artist") && role !== "artist")
-      return NextResponse.redirect(new URL("/artist", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
 
     if (pathname.startsWith("/admin") && role !== "admin")
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
         }
             return NextResponse.next()
 
@@ -34,7 +34,7 @@ export async function middleware(request : NextRequest){
 
 
 export const config = {
-  matcher: ['/products/:path*'],
+  matcher: ['/admin/:path*', '/client/:path*' , '/providers/:path*' ],
 }
 
 

@@ -7,8 +7,56 @@ import { db } from '@/lib/db';
 export async function GET() {
   const session = await getServerSession(authOptions);
   const uid = Number((session?.user as any)?.id);
-  if (!uid) return NextResponse.json({ msg: 'Unauthorized' }, { status: 401 });
+  const role = ((session?.user as any)?.role)
+  //  const isAdmin = role === 'admin' || role === 'manager'
+  if (!session) return NextResponse.json({ msg: 'Unauthorized' }, { status: 401 });
 
+  // for admin
+if (role === 'admin' || role === 'manager') {
+
+  const tickets = db().prepare(`
+    SELECT 
+      st.id,
+      st.creator_id,
+      st.booking_id,
+      st.category,
+      st.status,
+      st.created_at,
+      st.admin_response,
+      st.title,
+      st.resolved_at,
+      p.name AS creator_name,
+      u.email AS creator_email
+    FROM support_tickets st
+    LEFT JOIN users u ON u.id = st.creator_id
+    LEFT JOIN profiles p ON p.user_id = st.creator_id
+    ORDER BY st.created_at DESC
+  `).all() as any[];
+
+  const withMessages = tickets.map(ticket => {
+    const messages = db().prepare(`
+      SELECT 
+        id,
+        ticket_id,
+        sender_type,
+        sender_name,
+        body,
+        created_at
+      FROM ticket_messages
+      WHERE ticket_id = ?
+      ORDER BY created_at ASC
+    `).all(ticket.id);
+
+    return {
+      ...ticket,
+      messages
+    };
+  });
+
+  return NextResponse.json(withMessages);
+}
+
+  // for client
   const tickets = db().prepare(
     'SELECT * FROM support_tickets WHERE creator_id = ? ORDER BY created_at DESC'
   ).all(uid) as any[];
