@@ -20,6 +20,7 @@ import { BiSolidCategoryAlt } from 'react-icons/bi'
 import { MdOutlinePalette } from 'react-icons/md'
 import { LuCalendarCheck2 } from 'react-icons/lu'
 import { usePathname } from 'next/navigation'
+import NotificationBell from '../NotificationBell/NotificationBell'
 
 const HOME_TAB = { href: '/', label: 'Home', icon: MdHomeFilled }
 
@@ -31,6 +32,11 @@ const ADMIN_TABS = [
 
 const CLIENT_TABS = [
   { href: '/client/dashboard', label: 'Dashboard', icon: BiSolidCategoryAlt },
+  { href: '/artistApp' , label: "Become a pro" , icon:BiSolidCategoryAlt},
+]
+
+const ARTIST_TABS = [
+  { href:'/providers/dashboard' , label:"Dashboard" , icon: BiSolidCategoryAlt },
 ]
 
 interface Tab { href: string; label: string; icon: any }
@@ -63,10 +69,11 @@ export default function Navbar() {
 
   const role = (session?.user as any)?.role?.toLowerCase()
   const isAdmin = role === 'admin' || role === 'manager'
+  const isArtist = role === 'artist' || role === 'HAIRDRESSER'
 
   // Which tabs to show on the left, based on role
   const tabs: Tab[] = session
-    ? [HOME_TAB, ...(isAdmin ? ADMIN_TABS : !isAdmin ? CLIENT_TABS :  [])]
+    ? [HOME_TAB, ...(isAdmin ? ADMIN_TABS : !isAdmin ? CLIENT_TABS :  ARTIST_TABS)]
     : []
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -170,7 +177,6 @@ export default function Navbar() {
                     <DropdownMenuItem asChild><Link href='/offers'>Special offers</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
-                    {/* <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem> */}
                     <DropdownMenuItem asChild><Link href='/ourService'>Our services</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/howItWork'>How it works</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/contactUs'>Contact Us</Link></DropdownMenuItem>
@@ -190,12 +196,13 @@ export default function Navbar() {
               </Link>
             </>
           )}
-
+          {session && <NotificationBell/>} 
           {session && ProfileMenu}
         </div>
 
         {/* Mobile */}
         <div className='md:hidden flex items-center gap-2'>
+          {session && <NotificationBell />}
           {session ? ProfileMenu : (
             <Link href='/LogIn'>
               <Button className=' text-white'>Log in</Button>

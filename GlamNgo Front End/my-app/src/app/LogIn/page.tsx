@@ -78,7 +78,7 @@ async function handleLogIn(values: loginSchemaType) {
 
     const redirectMap: Record<string, string> = {
       CLIENT: "/client/dashboard",
-      ARTIST: "/artist/dashboard",
+      artist: "/providers/dashboard",
       ADMIN: "/admin/dashboard",
     };
 

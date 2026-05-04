@@ -53,6 +53,7 @@ export const authOptions: NextAuthOptions = {
                 } as any;
             }
         })
+        
     ],
     callbacks: {
         async jwt({ token, user }) {

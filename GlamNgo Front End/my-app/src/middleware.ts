@@ -7,7 +7,7 @@ export async function middleware(request : NextRequest){
 
     if(!token){
         if(pathname.startsWith('/client') ||
-        pathname.startsWith("/artist")||
+        pathname.startsWith("/providers")||
         pathname.startsWith("/admin")){
             return NextResponse.redirect(new URL ("/LogIn" , request.url))
         }
@@ -20,7 +20,7 @@ export async function middleware(request : NextRequest){
         if (pathname.startsWith("/client") && role !== "client")
       return NextResponse.redirect(new URL("/", request.url));
 
-    if (pathname.startsWith("/artist") && role !== "artist")
+    if (pathname.startsWith("/providers") && role !== "artist")
       return NextResponse.redirect(new URL("/", request.url));
 
     if (pathname.startsWith("/admin") && role !== "admin")

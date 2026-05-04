@@ -7,6 +7,8 @@ import { BiSolidCategoryAlt } from "react-icons/bi";
 import { MdOutlinePalette } from "react-icons/md";
 import { IoTicketOutline } from "react-icons/io5";
 import { MdOutlineCreditCard } from "react-icons/md";
+import { FaWpforms } from "react-icons/fa";
+
 
 
 
@@ -67,6 +69,13 @@ export default function AsideNavAdmin({open , setOpen} : AsideNavProps) {
               <Link href={'/admin/tickets'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <IoTicketOutline className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Tickets</span>
+              </Link>
+            </li>
+
+             <li>
+              <Link href={'/admin/applications'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                    <FaWpforms className='text-xl'/>
+                <span className="flex-1 ms-3 whitespace-nowrap">Application</span>
               </Link>
             </li>
 

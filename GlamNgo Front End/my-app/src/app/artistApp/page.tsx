@@ -11,8 +11,11 @@ import { AlertCircleIcon } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { artistSchema, artistSchemaType } from "@/schema/artist.shcema"
 import { zodResolver } from "@hookform/resolvers/zod"
-import axios from "axios"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { useEffect } from "react"
+import { LogIn } from "lucide-react"
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -48,6 +51,14 @@ const STEP_LABELS = [
 
 export default function ArtistApp() {
   const [step, setStep] = useState(1)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [idCardFile, setIdCardFile] = useState<File | null>(null)
+  const router = useRouter()
+  const { data: session, status: authStatus } = useSession()
+  const sessionRole = ((session?.user as any)?.role || '').toLowerCase()
+  const sessionEmail = session?.user?.email || ''
+  const sessionName = session?.user?.name || ''
 
   const form = useForm<artistSchemaType>({
     defaultValues: {
@@ -70,26 +81,80 @@ export default function ArtistApp() {
     // resolver: zodResolver(artistSchema),
   })
 
-  const { handleSubmit, control } = form
+  const { handleSubmit, control, reset } = form
+
+  // Prefill name + email from session once it loads
+  useEffect(() => {
+    if (authStatus !== 'authenticated') return
+    const [first, ...rest] = (sessionName || '').trim().split(' ')
+    reset(values => ({
+      ...values,
+      firstName: values.firstName || first || '',
+      lastName: values.lastName || rest.join(' ') || '',
+      email: values.email || sessionEmail || '',
+    }))
+  }, [authStatus, sessionEmail, sessionName, reset])
 
   // ── Submit ──────────────────────────────────────────────────────────────────
 
 async function handleArtistLogin(values: artistSchemaType) {
+  if (submitting) return
+  setSubmitting(true)
   try {
-    const res = await axios.post("http://127.0.0.1:5001/artist/verification", values)
-    console.log(res)
-    console.log(values)
-    if (res.status === 200) {
-      toast.success("Application submitted successfully!", {
+    const fd = new FormData()
+    fd.append("firstName", values.firstName ?? "")
+    fd.append("lastName", values.lastName ?? "")
+    fd.append("email", values.email ?? "")
+    fd.append("phone", values.phone ?? "")
+    fd.append("yearsOfExperience", String(values.yearsOfExperience ?? 0))
+    fd.append("specialties", JSON.stringify(values.specialties ?? []))
+    fd.append("certifications", values.certifications ?? "")
+    fd.append("license", values.license ?? "")
+    fd.append("services", JSON.stringify(values.services ?? []))
+    fd.append("priceRange", String(values.priceRange ?? 0))
+    fd.append("travelRange", String(values.travelRange ?? 0))
+    fd.append("portfolioDescription", values.portfolioDescription ?? "")
+    fd.append("instagram", values.instagram ?? "")
+    fd.append("website", values.website ?? "")
+    if (idCardFile) fd.append("idCard", idCardFile)
+
+    const res = await fetch("api/artist-applications", {
+      method: "POST",
+      body: fd,
+    })
+    const data = await res.json().catch(() => ({} as any))
+
+    console.log(data);
+    
+
+    if (res.status === 401 || data?.code === 'UNAUTHENTICATED') {
+      toast.error("Please sign in first to submit your application.", {
         duration: 3000,
         position: "top-center",
       })
+      router.push(`/LogIn?callbackUrl=${encodeURIComponent('/artistApp')}`)
+      return
     }
+    if (!res.ok) {
+      toast.error(data?.msg || "Failed to submit application", {
+        duration: 3500,
+        position: "top-center",
+      })
+      return
+    }
+
+    toast.success("Application submitted! We'll be in touch soon.", {
+      duration: 3500,
+      position: "top-center",
+    })
+    setSubmitted(true)
   } catch (err: any) {
-    toast.error(err?.response?.data?.message ?? "Something went wrong. Please try again.", {
+    toast.error("Network error — please try again.", {
       duration: 3000,
       position: "top-center",
     })
+  } finally {
+    setSubmitting(false)
   }
 }
 
@@ -104,6 +169,75 @@ async function handleArtistLogin(values: artistSchemaType) {
   }
   
   // ─── Render ─────────────────────────────────────────────────────────────────
+
+  if (authStatus === 'loading') {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center text-gray-500">
+        Loading...
+      </div>
+    )
+  }
+
+  if (authStatus !== 'authenticated') {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-6">
+        <div className="max-w-md w-full bg-white border border-purple-200 rounded-xl shadow-sm p-8 text-center">
+          <div className="mx-auto w-12 h-12 rounded-full bg-linear-to-t from-purple-500 to-pink-500 flex items-center justify-center mb-4">
+            <LogIn className="text-white w-6 h-6" />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Sign in to apply</h1>
+          <p className="text-gray-500 mb-6">
+            Create an account or sign in so we can keep you posted on your
+            application status.
+          </p>
+          <Button
+            onClick={() => router.push(`/LogIn?callbackUrl=${encodeURIComponent('/artistApp')}`)}
+            className="w-full bg-linear-to-b from-purple-500 to-pink-500 text-white cursor-pointer"
+          >
+            Sign in to continue
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (sessionRole === 'artist' || sessionRole === 'hairdresser') {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-6">
+        <div className="max-w-md w-full bg-white border border-pink-200 rounded-xl shadow-sm p-8 text-center">
+          <h1 className="text-2xl font-bold mb-2">You&apos;re already an artist</h1>
+          <p className="text-gray-500 mb-6">
+            Head to your dashboard to manage your services and bookings.
+          </p>
+          <Button
+            onClick={() => router.push('/')}
+            className="w-full bg-linear-to-b from-purple-500 to-pink-500 text-white cursor-pointer"
+          >
+            Back to Home
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (sessionRole === 'admin' || sessionRole === 'manager') {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-6">
+        <div className="max-w-md w-full bg-white border border-amber-200 rounded-xl shadow-sm p-8 text-center">
+          <h1 className="text-2xl font-bold mb-2">Admins can&apos;t apply</h1>
+          <p className="text-gray-500 mb-6">
+            Sign in with a client account to submit an artist application.
+          </p>
+          <Button
+            onClick={() => router.push('/admin/applications')}
+            className="w-full bg-linear-to-b from-purple-500 to-pink-500 text-white cursor-pointer"
+          >
+            Review Applications
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -155,6 +289,24 @@ async function handleArtistLogin(values: artistSchemaType) {
       {/* ── Form Body ─────────────────────────────────────────────────────── */}
       <div className="bg-white py-10">
         <div className="container w-[90%] max-w-2xl mx-auto">
+          {submitted ? (
+            <div className="text-center py-16 px-6 border border-green-200 bg-green-50 rounded-xl">
+              <h2 className="text-2xl font-bold text-green-700 mb-2">
+                Application Received
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Thanks for applying! Our admin team will review your submission
+                and get back to you shortly.
+              </p>
+              <Button
+                type="button"
+                onClick={() => router.push("/")}
+                className="bg-linear-to-b from-purple-500 to-pink-500 text-white cursor-pointer"
+              >
+                Back to Home
+              </Button>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit(handleArtistLogin)}>
 
             {/* ── Step 1: Personal Info ──────────────────────────────────── */}
@@ -287,7 +439,7 @@ async function handleArtistLogin(values: artistSchemaType) {
                             type="number"
                             placeholder="Years of Experience"
                             // FIX: coerce string → number for number inputs
-                            value={field.value}
+                            value={field.value }
                             onChange={(e) =>
                               field.onChange(e.target.valueAsNumber)
                             }
@@ -694,14 +846,17 @@ async function handleArtistLogin(values: artistSchemaType) {
                           d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"
                         />
                       </svg>
-                      <p className="text-sm font-medium">Upload your ID card</p>
+                      <p className="text-sm font-medium">
+                        {idCardFile ? idCardFile.name : "Upload your ID card"}
+                      </p>
                       <p className="text-xs text-gray-400 mt-1">
                         Accepted formats: JPG, PNG, PDF (Max 10MB)
                       </p>
                       <input
                         type="file"
                         className="hidden"
-                        accept=".jpg,.jpeg,.png,.pdf"
+                        accept=".jpg,.jpeg,.png,.pdf,.webp"
+                        onChange={(e) => setIdCardFile(e.target.files?.[0] ?? null)}
                       />
                     </label>
                     <p className="text-sm text-gray-500 mt-2">
@@ -737,15 +892,17 @@ async function handleArtistLogin(values: artistSchemaType) {
                     {/* FIX: final step uses type="submit" to actually submit the form */}
                     <Button
                       type="submit"
+                      disabled={submitting}
                       className="bg-linear-to-b from-purple-500 to-pink-500 text-white cursor-pointer"
                     >
-                      Submit Application
+                      {submitting ? "Submitting..." : "Submit Application"}
                     </Button>
                   </div>
                 </div>
               </div>
             )}
           </form>
+          )}
         </div>
       </div>
     </>
