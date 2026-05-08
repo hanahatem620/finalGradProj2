@@ -7,19 +7,7 @@ import { Input } from '@/components/ui/input'
 import { LuSearch } from 'react-icons/lu'
 import { AdminBooking } from '@/types/adminBooking.type'
 
-// interface AdminBooking {
-//   id: number
-//   client_id: number
-//   client_name: string | null
-//   client_email: string
-//   provider_id: number
-//   provider_name: string | null
-//   provider_email: string
-//   start_datetime: string
-//   end_datetime: string
-//   status: string
-//   total_price: number
-// }
+
 
 const statusTone: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',

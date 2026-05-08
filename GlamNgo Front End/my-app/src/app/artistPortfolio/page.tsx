@@ -78,7 +78,7 @@ function ArtistPortfolioInner() {
   // ── Availability ───────────────────────────────────────────────────────
   const [segments,             setSegments]             = useState<Segment[]>([])
   const [availabilityLoading,  setAvailabilityLoading]  = useState(false)
-  const [hasWorkingHours,      setHasWorkingHours]      = useState(true)
+  // const [hasWorkingHours,      setHasWorkingHours]      = useState(true)
 
   // ── Payment ────────────────────────────────────────────────────────────
   const [paymentMethod, setPaymentMethod] = useState<'FAWRY' | 'CARD'>('FAWRY')
@@ -140,8 +140,10 @@ function ArtistPortfolioInner() {
       .then(data => {
         if (cancelled || !data) return
         setSegments(data.segments || [])
-        setHasWorkingHours(!!data.hasWorkingHours)
+        console.log(data);
       })
+      
+      
       .finally(() => { if (!cancelled) setAvailabilityLoading(false) })
     return () => { cancelled = true }
   }, [providerId, date])
@@ -431,20 +433,21 @@ useEffect(() => {
                     weekday: 'long', day: 'numeric', month: 'long',
                   })}
                 </h3>
-                {!hasWorkingHours ? (
-                  <div className='border border-dashed border-gray-200 rounded-md p-6 text-center text-sm text-gray-500'>
-                    This artist is off on this day.
-                    <br />Pick another date.
-                  </div>
-                ) : (
-                  <BookingTimeline
-                    segments={segments}
-                    duration={totalDuration}
-                    value={time}
-                    onChange={setTime}
-                    loading={availabilityLoading}
-                  />
-                )}
+                {!segments.some(s => s.status === 'available') ? (
+  <div className='border border-dashed border-gray-200 rounded-md p-6 text-center text-sm text-gray-500'>
+    No available slots for this day.
+    <br />Pick another date.
+  </div>
+) : (
+  <BookingTimeline
+    segments={segments}
+    duration={totalDuration}
+    value={time}
+    onChange={setTime}
+    loading={availabilityLoading}
+  />
+)
+                }
               </div>
             </div>
           </div>

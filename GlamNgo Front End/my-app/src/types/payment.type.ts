@@ -27,4 +27,5 @@ export interface Summary {
   totalRevenue: number;
   completedPayments: number;
   pendingAmounts: number;
+  totalEarned: number
 }

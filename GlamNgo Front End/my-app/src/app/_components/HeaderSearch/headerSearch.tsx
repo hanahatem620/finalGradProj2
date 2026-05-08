@@ -19,9 +19,10 @@ export default function HeaderSearch() {
     <>
 
     <div>
-              <div className="relative">
+              <div className="relative inline-block w-full">
       <div>
-            <Image src={hero} width={500} height={500} className="w-full object-cover h-screen aspect-square" alt="hero"/>
+            <Image src={hero}  width={1400}
+    height={500} loading="eager" className="w-full object-cover h-screen aspect-square block" alt="hero" quality={100}/>
       </div>  
   <div className="absolute inset-0 bg-black/40"></div>
 

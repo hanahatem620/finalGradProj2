@@ -78,7 +78,7 @@ export default function AvatarUploader({ initialImageUrl, initialName, onChange 
             className='w-full h-full object-cover'
           />
         ) : (
-          <div className='w-full h-full bg-gradient-to-br from-pink-400 to-pink-600 text-white font-bold flex items-center justify-center text-5xl'>
+          <div className='w-full h-full bg-linear-to-br from-pink-400 to-pink-600 text-white font-bold flex items-center justify-center text-5xl'>
             {initial}
           </div>
         )}
@@ -111,6 +111,7 @@ export default function AvatarUploader({ initialImageUrl, initialName, onChange 
         )}
         <p className='text-xs text-gray-400'>PNG / JPG / WEBP, up to 5 MB</p>
         <input
+          aria-label="Upload avatar"
           ref={fileRef}
           type='file'
           accept='image/*'

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 export default function GetStart() {
   return (
     <motion.div
-      className='py-16 bg-gradient-to-b from-pink-100 via-pink-50 to-purple-100 relative overflow-hidden'
+      className='py-16 bg-linear-to-b from-pink-100 via-pink-50 to-purple-100 relative overflow-hidden'
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.3 }}
@@ -52,7 +52,7 @@ export default function GetStart() {
           whileTap={{ scale: 0.97 }}
         >
           <Link href='/artists'>
-            <Button className='bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white px-8 py-6 text-lg rounded-full shadow-lg'>
+            <Button className='bg-linear-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white px-8 py-6 text-lg rounded-full shadow-lg'>
               Book Your First Service
             </Button>
           </Link>

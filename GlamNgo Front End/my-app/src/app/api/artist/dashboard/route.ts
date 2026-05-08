@@ -66,9 +66,11 @@ const reviews = db().prepare(`
     r.id,
     r.rating,
     r.comment,
-    r.created_at
+    r.created_at,
+    p.name AS client_name
   FROM reviews r
   JOIN users u ON u.id = r.client_id
+  JOIN profiles p ON p.user_id = u.id
   WHERE r.provider_id = ?
   ORDER BY r.created_at DESC
 `).all(uid) as any[]

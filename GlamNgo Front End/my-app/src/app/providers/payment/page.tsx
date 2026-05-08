@@ -64,7 +64,7 @@ useEffect(() => {
 
             <div className='bg-pink-100 border border-pink-200 p-5  lg:w-xs w-sm rounded-xl '>
                 <p className='text-sm text-gray-500 font-medium'>Total Revenue </p>
-                <h1 className='font-bold text-2xl '>${summary?.totalRevenue?.toFixed(2) || "0.00"}</h1>
+                <h1 className='font-bold text-2xl '>${summary?.totalEarned?.toFixed(2) || "0.00"}</h1>
                 <p className='text-gray-400 text-xs mt-1'>This Year</p>
             </div>
 
@@ -104,7 +104,7 @@ useEffect(() => {
 
                                     <div>
                                         <p className='text-gray-500 text-sm'>
-                                            with {tx.provider_name || "Artist"} • {dateFormatted}
+                                            with {tx.client_name } • {dateFormatted}
                                         </p>
                                         <p className='text-gray-400 text-xs mt-0.5 tracking-wide uppercase font-medium'>
                                             {tx.method} payment

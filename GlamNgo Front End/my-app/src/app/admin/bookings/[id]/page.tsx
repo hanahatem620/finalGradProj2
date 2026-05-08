@@ -15,37 +15,6 @@ import {
 } from 'react-icons/lu'
 import { Booking } from '@/types/adminBookingReceipt.type'
 
-// interface Txn {
-//   id: number
-//   method: string
-//   amount: number
-//   status: string
-//   created_at: string
-// }
-// interface Item {
-//   id: number
-//   item_type: string | null
-//   item_name: string | null
-//   price_at_booking: number
-//   addons_summary: string | null
-// }
-// interface Booking {
-//   id: number
-//   client_id: number
-//   client_email: string
-//   client_name: string | null
-//   provider_id: number
-//   provider_email: string
-//   provider_name: string | null
-//   provider_image?: string | null
-//   start_datetime: string
-//   end_datetime: string
-//   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
-//   total_price: number
-//   created_at: string
-//   items: Item[]
-//   transactions: Txn[]
-// }
 
 const statusTone: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',

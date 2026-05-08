@@ -23,10 +23,8 @@ interface AppliedFilters {
 }
 
 interface ArtistsProps {
-  // FIX — accepts the snapshot object instead of 5 separate live strings + a boolean.
-  // The component re-filters only when this object reference changes,
-  // which only happens when the Search button is pressed in BookService.
-  appliedFilters?: AppliedFilters
+  appliedFilters?: AppliedFilters,
+  limit?: number
 }
 
 // ── Animations ─────────────────────────────────────────────────────────────
@@ -55,7 +53,7 @@ function startingFrom(services: ProviderService[]) {
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
-export default function Artists({ appliedFilters }: ArtistsProps) {
+export default function Artists({ limit, appliedFilters }: ArtistsProps) {
 
   const [providers, setProviders] = useState<ProviderWithRating[] | null>(null)
   const [error,     setError]     = useState(false)

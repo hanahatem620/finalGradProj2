@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { GetProvider } from '@/types/getProvider';
 import { toast } from 'sonner';
+import AvatarUploader from '@/app/_components/AvatarUploader/AvatarUploader';
 
 
 
@@ -27,10 +28,10 @@ export default function providerSettings() {
   const [provider, setProvider] = useState<GetProvider | null>(null)
     const [saving, setSaving] = useState(false)
     const [name, setName] = useState('')
-const [bio, setBio] = useState('')
-const [location, setLocation] = useState('')
 const [contact, setContact] = useState('')
 const [email, setEmail] = useState('')
+  const [profile, setProfile] = useState<any>(null)
+
   
 
 useEffect(() => {
@@ -57,13 +58,14 @@ async function save() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name,
-        email,
-        contact_info: contact,
+        name: name || provider?.name,
+  email: email || provider?.email,
+  contact_info: contact || provider?.contact_info,
       }),
     })
 
     const data = await res.json().catch(() => null)
+    console.log(data)
 
     if (!res.ok) {
       toast(data?.msg || 'Failed to save', {
@@ -169,15 +171,19 @@ async function save() {
                 </div>
 
                 <div>
-                    <h2 className='font-bold'>Portfolio Photos</h2>
-                    <p className='text-gray-500'>Upload photos of your work (maximum 6 photos) </p>
+                    <h2 className='font-bold'>Profile Photo</h2>
+                    {/* <p className='text-gray-500'>Upload photos of your work (maximum 6 photos) </p> */}
+                    <AvatarUploader
+                              initialImageUrl={profile?.image_url ?? null}
+                              initialName={session?.user?.name ?? 'A'}/>
                 </div>
             </div>
 
             <Separator className='bg-gray-100'/>
 
-            <div>
-                  <label className="w-64 h-64 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:border-gray-400 transition">
+            {/* <div>
+                  <label className="w-64 h-64 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:border-gray-400 transition "
+                  hidden>
       
 
       
@@ -191,7 +197,7 @@ async function save() {
         className="hidden"
       />
     </label>
-            </div>
+            </div> */}
            
 
         </div>

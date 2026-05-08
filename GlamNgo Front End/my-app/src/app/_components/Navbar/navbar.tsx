@@ -73,7 +73,7 @@ export default function Navbar() {
 
   // Which tabs to show on the left, based on role
   const tabs: Tab[] = session
-    ? [HOME_TAB, ...(isAdmin ? ADMIN_TABS : !isAdmin ? CLIENT_TABS :  ARTIST_TABS)]
+    ? [HOME_TAB, ...(isAdmin ? ADMIN_TABS : isArtist ? ARTIST_TABS :  CLIENT_TABS)]
     : []
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -178,14 +178,15 @@ export default function Navbar() {
                     <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/ourService'>Our services</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href='/howItWork'>How it works</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href='/contactUs'>Contact Us</Link></DropdownMenuItem>
-
+                    <DropdownMenuItem asChild><Link href='/howItWorks'>How it works</Link></DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
               <Link href='/becomeAPro' className='text-sm hover:text-pink-500'>Become a Pro</Link>
               <Link href='/LogIn' className='text-sm hover:text-pink-500'>Sign In</Link>
+              <Link href='/contactUs' className='text-sm hover:text-pink-500 '>Contact Us</Link>
+              <Link href='/aboutUs' className='text-sm hover:text-pink-500 '>About Us</Link>
+
 
 
 
