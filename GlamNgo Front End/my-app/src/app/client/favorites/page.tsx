@@ -53,12 +53,9 @@ export default function clientFav() {
       setFavorites(data.favorites || []);
       
     } catch (err) {
-      console.log(err);
+      toast.error('Failed to fetch favorites');
     }
   }
-
-
- 
 
   useEffect(() => {
     GetFav();

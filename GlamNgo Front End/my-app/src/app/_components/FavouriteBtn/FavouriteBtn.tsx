@@ -28,7 +28,7 @@ async function toggleFav() {
 
   if (!res.ok) return;
 
-  setIsFav(!isFav); // ✅ toggle فوري
+  setIsFav(!isFav);
 
   if (method === 'DELETE') {
     toast.success('Removed from favorites',{
@@ -36,7 +36,7 @@ async function toggleFav() {
       duration:2000
     });
 
-    // 👇 مهم جدًا
+  
     onRemove?.();
   } else {
     toast.success('Added to favorites',{

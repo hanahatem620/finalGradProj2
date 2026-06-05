@@ -140,7 +140,7 @@ axios.post("/api/auth/register" , values).then((res) => {
     </div>
 
     <div className="icon-group mt-6 w-full">
-      <h1 className="text-3xl font-semibold ">Client Access</h1>
+      {/* <h1 className="text-3xl font-semibold ">Client Access</h1> */}
       <h4 className="mb-5 text-gray-500 max-w-95 mx-auto ">
         Access your beauty bookings, manage your profile, and discover new services.
       </h4>

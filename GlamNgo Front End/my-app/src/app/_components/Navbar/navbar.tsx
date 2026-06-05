@@ -178,7 +178,7 @@ export default function Navbar() {
                     <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/ourService'>Our services</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href='/howItWorks'>How it works</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/howItWork'>How it works</Link></DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>

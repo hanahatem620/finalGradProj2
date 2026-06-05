@@ -11,8 +11,10 @@ export interface Booking {
   date: string
   time: Time
   client: Client
+  client_location?: string
   services: Service[]
   actions: string[]
+
 }
 
 export interface Time {

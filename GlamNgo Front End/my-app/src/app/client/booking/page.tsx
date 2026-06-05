@@ -6,9 +6,23 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FiClock } from 'react-icons/fi'
-import { LuCalendarCheck2 } from 'react-icons/lu'
+import { LuCalendarCheck2, LuMessageCircleMore } from 'react-icons/lu'
 import { toast } from 'sonner'
 import { BookingRow } from '@/types/bookingRow.type'
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { ProviderBook } from '@/types/providerBooking.type'
+import { Separator } from '@/components/ui/separator'
 
 
 const statusStyle: Record<string, string> = {
@@ -46,6 +60,18 @@ function BookingCard({ b, idx, onCancel }: {
   idx: number
   onCancel: (id: number) => void
 }) {
+
+
+
+
+  const getInitials = (name: string) =>
+  name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+
+
   return (
     <motion.div
       key={b.id}
@@ -92,25 +118,80 @@ function BookingCard({ b, idx, onCancel }: {
         </div>
       </div>
 
-      <div className='flex gap-2 mt-3 flex-wrap'>
+      <div className='flex gap-2 mt-3 '>
         {b.status === 'PENDING' && (
           <>
-            <Link href='/client/messageArtist'>
-              <Button className='bg-pink-500 hover:bg-pink-600'>Message</Button>
+            <Link href={`/client/bookingDetails/${b.id}`} className='flex-1'>
+              <Button className='bg-pink-500 hover:bg-pink-600 w-full'>view details</Button>
             </Link>
-            <Button variant='outline' onClick={() => onCancel(b.id)}>
+            <Button variant='outline' onClick={() => onCancel(b.id)} >
               Cancel
             </Button>
           </>
         )}
         {b.status === 'CONFIRMED' && (
           <>
-            <Link href='/client/messageArtist'>
-              <Button className='bg-pink-500 hover:bg-pink-600'>Message Artist</Button>
-            </Link>
-            {/* <Link href='/client/rescheduleAppointment'>
-              <Button variant='outline'>Reschedule</Button>
-            </Link> */}
+           <div className='flex items-center gap-2  w-full'>
+               <AlertDialog >
+                  <AlertDialogTrigger asChild>
+                    <Button className="bg-pink-100 text-pink-500 hover:bg-pink-50 w-full flex-1">
+                      <LuMessageCircleMore/>
+                      Contact Artist</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader className="flex flex-col gap-3">
+                      <AlertDialogTitle>
+                        <div className="flex items-center gap-2">
+                          <div>
+                            <p className="bg-pink-50 text-pink-500 p-2 rounded-full w-fit">{getInitials(b?.provider_name)}</p>
+                          </div>
+            
+                          <div>
+                            <h2 className="font-bold">{b?.provider_name}</h2>
+                            <h3 className="text-gray-500 text-xs">{b.provider_email}</h3>
+                          </div>
+                        </div>
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="w-full mt-3" asChild>
+                        <div className="text-center flex flex-col items-center gap-2">
+                          <p className="font-bold text-black text-2xl"> Contact <span>{b?.provider_name}</span></p>
+                       {b?.provider_phone ? (
+              <>
+                <h3 className="bg-gray-100 text-black p-3 rounded-md">
+                  {b.provider_phone}
+                </h3>
+            
+                <a
+                  href={`tel:${b.provider_phone}`}
+                  className="bg-pink-500 p-3 rounded-md text-white"
+                >
+                  Call Now
+                </a>
+              </>
+            ) : (
+              <>
+                <h3 className="bg-gray-100 text-black p-3 rounded-md">
+                  {b?.provider_email}
+                </h3>
+            
+                <a
+                  href={`mailto:${b.provider_email}`}
+                  className="bg-pink-500 p-3 rounded-md text-white"
+                >
+                  Contact via Email
+                </a>
+              </>
+            )}
+            <Separator className="mt-4 mb-4"/>
+            <p className="bg-gray-100 text-gray-500 p-3 rounded-md">You can reach {b?.provider_name} directly for booking inquiries and updates</p>
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
             <Button
               variant='outline'
               className='border-red-200 text-red-600 hover:bg-red-50'
@@ -118,12 +199,13 @@ function BookingCard({ b, idx, onCancel }: {
             >
               Cancel
             </Button>
+           </div>
           </>
         )}
         {b.status === 'COMPLETED' && !b.reviewed && (
           <>
-            <Link href={`/client/leaveReview?booking=${b.id}`}>
-              <Button className='bg-pink-500 hover:bg-pink-600'>Leave Review</Button>
+            <Link href={`/client/leaveReview?booking=${b.id}`} className='flex-1'>
+              <Button className='bg-pink-500 hover:bg-pink-600 w-full'>Leave Review</Button>
             </Link>
             <Link href={`/artistPortfolio?id=${b.provider_id}`}>
               <Button variant='outline'>Book Again</Button>
@@ -132,7 +214,7 @@ function BookingCard({ b, idx, onCancel }: {
         )}
         {b.status === 'COMPLETED' && b.reviewed && (
           <>
-            <Badge className='bg-gray-100 text-gray-600 py-1 px-3'>Review submitted</Badge>
+            <Badge className='bg-gray-100 text-gray-600 py-1 px-3 flex-1 rounded-md'>Review submitted</Badge>
             <Link href={`/artistPortfolio?id=${b.provider_id}`}>
               <Button variant='outline'>Book Again</Button>
             </Link>
@@ -164,6 +246,7 @@ function EmptyTab({ label }: { label: string }) {
 export default function ClientBooking() {
   const [bookings, setBookings] = useState<BookingRow[]>([])
   const [loading, setLoading] = useState(true)
+ const [book, setBook] = useState<ProviderBook | null>(null)
 
   async function load() {
     try {
@@ -217,6 +300,8 @@ export default function ClientBooking() {
   )
   const completed = bookings.filter(b => b.status === 'COMPLETED')
   const cancelled = bookings.filter(b => b.status === 'CANCELLED')
+
+  
 
   return (
     <div className='container lg:w-[80%] w-[90%] mx-auto py-10 flex flex-col gap-5'>

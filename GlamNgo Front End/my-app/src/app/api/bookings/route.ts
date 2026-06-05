@@ -29,18 +29,19 @@ export async function POST(req: Request) {
   const start = body.start_datetime;
   const end = body.end_datetime;
   const total = Number(body.total_price || 0);
+  const client_location = (body.client_location || '').toString().trim();
   const serviceIds: number[] = Array.isArray(body.service_ids)
     ? body.service_ids.map(Number).filter(Boolean) : [];
-  if (!providerId || !start || !end) {
+  if (!providerId || !start || !end || !client_location) {
     return NextResponse.json({ msg: 'Missing fields' }, { status: 400 });
   }
   try {
     const makeBooking = db().transaction(() => {
       const info = db().prepare(
         `INSERT INTO bookings (client_id, provider_id, start_datetime, end_datetime,
-                               status, total_price, created_at)
-         VALUES (?, ?, ?, ?, 'PENDING', ?, ?)`
-      ).run(uid, providerId, start, end, total, new Date().toISOString());
+                               status, total_price, created_at, client_location)
+         VALUES (?, ?, ?, ?, 'PENDING', ?, ?, ?)`
+      ).run(uid, providerId, start, end, total, new Date().toISOString() , client_location);
       const bookingId = Number(info.lastInsertRowid);
 
       // Persist every picked service as a booking_item so the admin detail

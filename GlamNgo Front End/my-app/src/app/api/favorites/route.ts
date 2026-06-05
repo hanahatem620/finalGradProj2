@@ -4,7 +4,6 @@ import { authOptions } from '../../../../auth';
 import { db } from '@/lib/db';
 
 
-// Run this once (or add it to your DB migration script):
 
 function ensureFavoritesTable() {
   db().prepare(`
@@ -20,7 +19,6 @@ function ensureFavoritesTable() {
   `).run();
 }
 
-// GET /api/favorites
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -32,7 +30,7 @@ export async function GET() {
 
   ensureFavoritesTable();
 
-  // 1. Get all favorited artists for this client
+  // Get all favorited artists for this client
   const favorites = db().prepare(`
     SELECT
       f.id          AS favorite_id,
@@ -51,10 +49,8 @@ export async function GET() {
     ORDER BY f.created_at DESC
   `).all(uid) as any[];
 
-  // 2. For each artist — attach services and review stats
   const result = favorites.map(fav => {
 
-    // Services: title + type
     const services = db().prepare(`
       SELECT id, title, type, base_price, duration
       FROM services
@@ -62,7 +58,7 @@ export async function GET() {
       ORDER BY base_price ASC
     `).all(fav.artist_id) as any[];
 
-    // Review stats: average stars + total count
+    //average stars + total count
     const reviewStats = db().prepare(`
       SELECT
         ROUND(AVG(rating), 1) AS average_stars,
@@ -103,8 +99,6 @@ export async function GET() {
   });
 }
 
-// POST /api/favorites
-
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   const uid  = Number((session?.user as any)?.id);
@@ -122,7 +116,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'artist_id is required' }, { status: 400 });
   }
 
-  // Make sure the artist exists and has a valid provider role
   const artist = db().prepare(`
     SELECT id, role FROM users
     WHERE id = ? AND role IN ('ARTIST', 'HAIRDRESSER') AND status = 'ACTIVE'
@@ -132,7 +125,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Artist not found' }, { status: 404 });
   }
 
-  // Check if already favorited
   const existing = db().prepare(
     'SELECT id FROM favorites WHERE client_id = ? AND artist_id = ?'
   ).get(uid, artist_id);
@@ -152,7 +144,6 @@ export async function POST(req: Request) {
   );
 }
 
-// DELETE /api/favorites
 
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);

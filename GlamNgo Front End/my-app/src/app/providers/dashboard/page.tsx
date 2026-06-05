@@ -24,7 +24,7 @@ export default function ProviderDashboard() {
     
 
 
-       const getInitials = (name: string) => name
+    const getInitials = (name: string) => name
     .split(' ')
     .map(n => n[0])
     .join('')
@@ -39,7 +39,6 @@ export default function ProviderDashboard() {
     const data = await res.json()
 
     setBook(data)
-    console.log(data)
   }
 
   load()
@@ -53,7 +52,6 @@ useEffect(() => {
     const data = await res.json()
 
     setProvider(data)
-    console.log(data)
   }
 
   load()
@@ -67,7 +65,7 @@ useEffect(() => {
     const data = await res.json()
 
     setDash(data)
-    console.log(data)
+    // console.log(data)
   }
 
   load()
@@ -99,7 +97,6 @@ async function applyStatus(id: number, status: string) {
       body: JSON.stringify({ status }),
     })
     const data = await res.json()
-    console.log(data);
     
 
     if (!res.ok) {
@@ -109,7 +106,6 @@ async function applyStatus(id: number, status: string) {
 
     toast.success(`Status → ${status.toLowerCase()}`, { position: 'top-center' })
 
-    // 👇 مهم عشان UI يتحدث
     window.location.reload()
 
   } finally {
@@ -150,14 +146,14 @@ async function applyStatus(id: number, status: string) {
             <h2 className="font-bold">{dash?.bookings?.completed}</h2>
     </div>
 
-    <div className='shadow-md rounded-md p-4 w-fit'>
+    {/* <div className='shadow-md rounded-md p-4 w-fit'>
             <div className="bg-pink-100 p-2 rounded-md w-fit">
                 <BiDollar className="text-pink-500 text-2xl"/>
             </div>
 
             <p className="text-gray-500">Available Days</p>
             <h2 className="font-bold">{dash?.available_days}</h2>
-    </div>
+    </div> */}
 
 
     </div>
@@ -168,7 +164,7 @@ async function applyStatus(id: number, status: string) {
         <div>
     <Table className="bg-white">
       <Table.ScrollContainer>
-        <Table.Content aria-label="Team members" className="min-w-150">
+        <Table.Content aria-label="Clients info" className="min-w-150 h-full">
           <Table.Header className={'bg-pink-500'}>
             <Table.Column isRowHeader>CLIENT</Table.Column>
             <Table.Column>SERVICES</Table.Column>
@@ -204,20 +200,24 @@ async function applyStatus(id: number, status: string) {
                 <div className="flex flex-col leading-tight">
                   <span>{b.date}</span>
                   <span className="text-gray-500">{b.time.start}</span>
+                  <p>{b.client_location}</p>
+
                 </div>
               </Table.Cell>
               <Table.Cell>
                 <Badge className="bg-yellow-100 text-yellow-500">{b.status}</Badge>
               </Table.Cell>
 
-             < Table.Cell className={"flex gap-2"}>
-                      <Button className="bg-pink-500 text-white" 
-                      onClick={() => applyStatus(b.id, 'CONFIRMED')}
-                      >Approve</Button>
-                      <Button className="bg-white text-black border border-gray-200"
-                      onClick={() => applyStatus(b.id, 'CANCELLED')}
-                      >Reject</Button>
-                    </Table.Cell>
+            <Table.Cell className={"align-middle"}>
+                   <div className='flex items-center gap-2 whitespace-nowrap'>
+                     <Button className="bg-pink-500 text-white" 
+                    onClick={() => applyStatus(b.id, 'CONFIRMED')}
+                    >Approve</Button>
+                    <Button className="bg-white text-black border border-gray-200"
+                    onClick={() => applyStatus(b.id, 'CANCELLED')}
+                    >Reject</Button>
+                   </div>
+                  </Table.Cell>
               
             </Table.Row>
               ))

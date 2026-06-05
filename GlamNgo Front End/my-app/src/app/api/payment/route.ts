@@ -3,7 +3,6 @@ import { db } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../auth';
 
-// POST /api/payments  — create a new transaction
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -12,8 +11,7 @@ export async function POST(req: Request) {
 
   if (!uid) return NextResponse.json({ msg: 'Unauthorized' }, { status: 401 });
 
-  // Only admin / artist / hairdresser can record a payment
-  // (clients pay through the booking flow, not directly)
+
   const allowed = ['admin', 'Manager', 'Artist', 'Hairdresser'];
   if (!allowed.includes(role)) {
     return NextResponse.json({ msg: 'Forbidden' }, { status: 403 });
@@ -65,14 +63,6 @@ export async function POST(req: Request) {
 }
 
 
-// GET /api/payments  — fetch payments based on role
-//
-//  CLIENT        → transactions where bookings.client_id   = me
-//  ARTIST /
-//  HAIRDRESSER   → transactions where bookings.provider_id = me
-//  ADMIN /
-//  MANAGER       → ALL transactions + summary stats
-// ─────────────────────────────────────────────────────────────────────────────
 export async function GET() {
   const session = await getServerSession(authOptions);
   const user = session?.user as any;
@@ -85,7 +75,6 @@ export async function GET() {
   }
 
   try {
-    // ── ADMIN / MANAGER — all transactions + full summary stats ──────────
     if (role === 'admin' || role === 'manager') {
 
       const payments = db().prepare(`
@@ -107,7 +96,6 @@ export async function GET() {
         ORDER BY t.created_at DESC
       `).all() as any[];
 
-      // ── Summary numbers ──────────────────────────────────────────────
       const totalTransactions = payments.length;
 
       const totalRevenue = payments
@@ -132,7 +120,6 @@ export async function GET() {
       });
     }
 
-    // ── CLIENT — transactions for bookings they made ─────────────────────
     if (role === 'client') {
 
       const payments = db().prepare(`
@@ -168,7 +155,6 @@ export async function GET() {
       });
     }
 
-    // ── ARTIST / HAIRDRESSER — transactions for bookings made with them ───
     if (role === 'artist' || role === 'hairdresser') {
 
       const payments = db().prepare(`
@@ -204,11 +190,9 @@ export async function GET() {
       });
     }
 
-    // ── Unknown role ──────────────────────────────────────────────────────
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   } catch (err) {
-    console.error('GET /api/payments error:', err);
     return NextResponse.json({ error: 'Failed to fetch payments' }, { status: 500 });
   }
 }

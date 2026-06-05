@@ -160,6 +160,7 @@ function ArtistPortfolioInner() {
   const selectedServices = provider?.services.filter(s => selected.has(s.id)) || []
   const totalDuration    = selectedServices.reduce((s, x) => s + x.duration, 0)
   const totalPrice       = selectedServices.reduce((s, x) => s + x.base_price, 0)
+  const [clientLocation, setClientLocation] = useState("")
 
   // ── Booking + payment submission ───────────────────────────────────────
   async function submitBooking(method: 'FAWRY' | 'CARD') {
@@ -170,6 +171,7 @@ function ArtistPortfolioInner() {
     const start    = new Date(date)
     start.setHours(hh, mm, 0, 0)
     const end = new Date(start.getTime() + totalDuration * 60000)
+    // const [clientLocation, setClientLocation] = useState("")
 
     try {
       // 1. Create booking
@@ -182,6 +184,7 @@ function ArtistPortfolioInner() {
           end_datetime:    end.toISOString(),
           total_price:     totalPrice,
           service_ids:     Array.from(selected),
+          client_location: clientLocation,
         }),
       })
 
@@ -426,6 +429,15 @@ useEffect(() => {
                   disabled={d => d.getTime() < new Date().setHours(0, 0, 0, 0)}
                   className='rounded-md border'
                 />
+
+                <div className='mt-4'>
+                  <label htmlFor="location" className='font-semibold mb-2 text-sm'>enter your address</label>
+                  <Input
+  placeholder="Enter your address (area, street, building)"
+  value={clientLocation}
+  onChange={(e) => setClientLocation(e.target.value)}
+/>
+                </div>
               </div>
               <div className='min-w-0'>
                 <h3 className='font-semibold text-sm mb-3 text-gray-600'>
@@ -433,21 +445,20 @@ useEffect(() => {
                     weekday: 'long', day: 'numeric', month: 'long',
                   })}
                 </h3>
-                {!segments.some(s => s.status === 'available') ? (
-  <div className='border border-dashed border-gray-200 rounded-md p-6 text-center text-sm text-gray-500'>
-    No available slots for this day.
-    <br />Pick another date.
-  </div>
-) : (
-  <BookingTimeline
-    segments={segments}
-    duration={totalDuration}
-    value={time}
-    onChange={setTime}
-    loading={availabilityLoading}
-  />
-)
-                }
+                {!segments ? (
+                  <div className='border border-dashed border-gray-200 rounded-md p-6 text-center text-sm text-gray-500'>
+                    This artist is off on this day.
+                    <br />Pick another date.
+                  </div>
+                ) : (
+                  <BookingTimeline
+                    segments={segments}
+                    duration={totalDuration}
+                    value={time}
+                    onChange={setTime}
+                    loading={availabilityLoading}
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -3,6 +3,8 @@ export interface BookingRow {
   provider_id: number
   provider_name: string
   provider_role: string
+  provider_email: string
+  provider_phone: string
   provider_image: string | null
   start_datetime: string
   end_datetime: string

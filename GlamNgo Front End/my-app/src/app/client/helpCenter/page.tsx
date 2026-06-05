@@ -35,7 +35,7 @@ export default function HelpCenter() {
   const [nCategory, setNCategory] = useState('Booking Issue')
   const [nDescription, setNDescription] = useState('')
 
-  // reply state (per open ticket)
+  // reply state 
   const [reply, setReply] = useState('')
   const [replyingId, setReplyingId] = useState<number | null>(null)
 

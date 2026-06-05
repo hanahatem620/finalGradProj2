@@ -1,8 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 
-// Point to the same SQLite file used by the old Flask servers so existing
-// users/bookings/providers all remain accessible.
 const DB_PATH = path.resolve(process.cwd(), '..', '..', 'instance', 'glamngo.db');
 
 let _db: Database.Database | null = null;

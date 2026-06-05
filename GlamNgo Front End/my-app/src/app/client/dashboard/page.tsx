@@ -191,7 +191,7 @@ export default function ClientDashboard() {
                   <FiClock /> EGP {b.total_price.toFixed(2)}
                 </h2>
               </div>
-              <Link href='/client/booking' className='block mt-3'>
+              <Link href={`/client/bookingDetails/${b.id}`} className='block mt-3'>
                 <Button className='bg-pink-100 text-pink-600 hover:bg-pink-200 rounded-md w-full'>
                   Manage Booking
                 </Button>

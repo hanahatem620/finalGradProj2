@@ -14,6 +14,7 @@ export async function GET() {
   const rows = db().prepare(`
     SELECT b.*,
            pu.email       AS provider_email,
+           pu.phone       AS provider_phone,
            pu.role        AS provider_role,
            pp.name        AS provider_name,
            pp.image_url   AS provider_image,
@@ -31,6 +32,8 @@ export async function GET() {
     client_id: b.client_id,
     provider_id: b.provider_id,
     provider_name: b.provider_name || (b.provider_email || '').split('@')[0],
+    provider_email: b.provider_email,
+    provider_phone: b.provider_phone,
     provider_role: (b.provider_role || '').toLowerCase(),
     provider_image: b.provider_image || null,
     start_datetime: b.start_datetime,

@@ -3,6 +3,7 @@ import { Payment, Summary } from "@/types/payment.type";
 import { useEffect, useState } from "react";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoReturnUpBack } from "react-icons/io5";
+import { toast } from "sonner";
 
 export default function ProviderPayment() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -38,7 +39,7 @@ useEffect(() => {
       setSummary(data.summary || null);
 
     } catch (err) {
-      console.error("Failed to fetch payments:", err);
+        toast.error('Failed to load payments');
     } finally {
       setLoading(false);
     }

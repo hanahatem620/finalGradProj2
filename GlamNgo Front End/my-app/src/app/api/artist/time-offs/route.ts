@@ -9,10 +9,10 @@ export async function POST(req: Request) {
   const userId = Number((session?.user as any)?.id)
   const role = ((session?.user as any)?.role || "").toLowerCase()
 
-  // 🛑 only artist
-  if (!userId || role !== "artist" && 'hairdresser') {
-    return NextResponse.json({ msg: "Unauthorized" }, { status: 401 })
-  }
+  // 🛑 only artist & hairdresser
+ if (!userId || !["artist", "hairdresser"].includes(role)) {
+  return NextResponse.json({ msg: "Unauthorized" }, { status: 401 })
+}
 
   const body = await req.json()
 
@@ -46,6 +46,30 @@ export async function POST(req: Request) {
       { status: 400 }
     )
   }
+
+
+//over lap
+const overlap = db().prepare(`
+  SELECT id FROM time_offs
+  WHERE provider_id = ?
+  AND NOT (
+    end_datetime <= ?
+    OR start_datetime >= ?
+  )
+`).get(
+  userId,
+  start.toISOString(),
+  end.toISOString()
+)
+
+if (overlap) {
+  return NextResponse.json(
+    { msg: "Time off overlaps existing one" },
+    { status: 409 }
+  )
+}
+
+
 
   // 💾 insert time off
   const result = db()

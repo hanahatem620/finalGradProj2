@@ -10,15 +10,6 @@ import { CiStar } from 'react-icons/ci'
 import { toast } from 'sonner'
 import { BookingRow } from '@/types/bookingRow.type'
 
-// interface BookingRow {
-//   id: number
-//   provider_id: number
-//   provider_name: string
-//   provider_image: string | null
-//   start_datetime: string
-//   status: string
-//   reviewed: boolean
-// }
 
 function LeaveReviewInner() {
   const router = useRouter()

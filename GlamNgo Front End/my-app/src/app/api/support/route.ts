@@ -3,12 +3,10 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../auth';
 import { db } from '@/lib/db';
 
-// List current user's support tickets (creator_id) with their messages.
 export async function GET() {
   const session = await getServerSession(authOptions);
   const uid = Number((session?.user as any)?.id);
   const role = ((session?.user as any)?.role)
-  //  const isAdmin = role === 'admin' || role === 'manager'
   if (!session) return NextResponse.json({ msg: 'Unauthorized' }, { status: 401 });
 
   // for admin

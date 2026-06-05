@@ -3,22 +3,23 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Bell, Check, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ApiPayload, NotificationItem } from '@/types/NotificationItem.type'
 
-interface NotificationItem {
-  id: number
-  user_id: number
-  type: string
-  title: string
-  body: string
-  is_read: number
-  action_url: string | null
-  created_at: string
-}
+// interface NotificationItem {
+//   id: number
+//   user_id: number
+//   type: string
+//   title: string
+//   body: string
+//   is_read: number
+//   action_url: string | null
+//   created_at: string
+// }
 
-interface ApiPayload {
-  unread_count: number
-  notifications: NotificationItem[]
-}
+// interface ApiPayload {
+//   unread_count: number
+//   notifications: NotificationItem[]
+// }
 
 function bucket(iso: string): 'today' | 'yesterday' | 'thisWeek' | 'earlier' {
   const t = Date.parse(iso)

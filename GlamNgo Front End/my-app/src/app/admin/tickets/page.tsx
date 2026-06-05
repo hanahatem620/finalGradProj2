@@ -95,9 +95,6 @@ export default function AdminTickets() {
       const res = await fetch(`/api/support/${ticketId}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // ✅ FIX 2 — removed senderType/senderName from body
-        // The API already reads the session role server-side to set sender_type.
-        // Sending it from the client is both redundant and a security hole.
         body: JSON.stringify({ body: text }),
       })
       if (res.ok) {
@@ -116,8 +113,8 @@ export default function AdminTickets() {
   async function updateStatus(ticketId: number, status: string) {
     setUpdatingId(ticketId)
     try {
-      const res = await fetch(`/api/support/${ticketId}`, {
-        method: 'POST',
+      const res = await fetch(`/api/support/${ticketId}/status`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       })

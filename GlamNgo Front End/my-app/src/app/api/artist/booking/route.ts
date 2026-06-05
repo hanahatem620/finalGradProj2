@@ -41,6 +41,7 @@ export async function GET(req: Request) {
       b.status,
       b.total_price,
       b.created_at,
+      b.client_location,
       cp.name   AS client_name,
       cu.email  AS client_email,
       cu.phone  AS client_phone,
@@ -95,6 +96,7 @@ export async function GET(req: Request) {
       status:       b.status,
       total_price:  b.total_price,
       created_at:   b.created_at,
+      client_location: b.client_location,
       date:         startDate.toLocaleDateString(undefined, {
         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
       }),

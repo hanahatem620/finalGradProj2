@@ -121,7 +121,7 @@ async function applyStatus(id: number, status: string) {
 
                     <Table className="bg-white">
               <Table.ScrollContainer>
-                <Table.Content aria-label="pending" className="min-w-150">
+                <Table.Content aria-label="pending" className="min-w-150 h-full">
 
                   <Table.Header className={'bg-pink-500'}>
                     <Table.Column isRowHeader>CLIENT</Table.Column>
@@ -165,16 +165,20 @@ async function applyStatus(id: number, status: string) {
   <div className="flex flex-col leading-tight">
     <span>{b.date}</span>
     <span className="text-gray-500">{b.time.start}</span>
+    <p>{b.client_location}</p>
+
   </div>
 </Table.Cell>
 
-      <Table.Cell className={"flex gap-2"}>
-        <Button className="bg-pink-500 text-white" 
+      <Table.Cell className={"align-middle"}>
+       <div className='flex items-center gap-2 whitespace-nowrap'>
+         <Button className="bg-pink-500 text-white" 
         onClick={() => applyStatus(b.id, 'CONFIRMED')}
         >Approve</Button>
         <Button className="bg-white text-black border border-gray-200"
         onClick={() => applyStatus(b.id, 'CANCELLED')}
         >Reject</Button>
+       </div>
       </Table.Cell>
                    </Table.Row>
                      ))
@@ -198,7 +202,7 @@ async function applyStatus(id: number, status: string) {
 
                     <Table className="bg-white">
               <Table.ScrollContainer>
-                <Table.Content aria-label="accepted" className="min-w-150">
+                <Table.Content aria-label="accepted" className="min-w-150 h-full">
                   <Table.Header className={'bg-pink-500'}>
                     <Table.Column isRowHeader>CLIENT</Table.Column>
                     <Table.Column>SERVICES</Table.Column>
@@ -240,6 +244,8 @@ async function applyStatus(id: number, status: string) {
   <div className="flex flex-col leading-tight">
     <span>{b.date}</span>
     <span className="text-gray-500">{b.time.start}</span>
+   <p>{b.client_location}</p>
+
   </div>
 </Table.Cell>
 

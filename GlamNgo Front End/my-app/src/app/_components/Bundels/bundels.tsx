@@ -132,7 +132,7 @@ useEffect(() => {
 
       {/* BUTTON */}
       <CardFooter className="mt-auto">
-        <Link href="/artists" className="w-full">
+        <Link href="/packageBooking" className="w-full">
           <Button className="w-full bg-pink-500 hover:bg-pink-600 rounded-full">
             Book Now
           </Button>
