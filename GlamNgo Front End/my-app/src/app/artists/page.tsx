@@ -23,8 +23,10 @@ interface AppliedFilters {
 }
 
 interface ArtistsProps {
-  appliedFilters?: AppliedFilters,
-  limit?: number
+  // FIX — accepts the snapshot object instead of 5 separate live strings + a boolean.
+  // The component re-filters only when this object reference changes,
+  // which only happens when the Search button is pressed in BookService.
+  appliedFilters?: AppliedFilters
 }
 
 // ── Animations ─────────────────────────────────────────────────────────────
@@ -53,7 +55,7 @@ function startingFrom(services: ProviderService[]) {
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
-export default function Artists({ limit, appliedFilters }: ArtistsProps) {
+export default function Artists({ appliedFilters }: ArtistsProps) {
 
   const [providers, setProviders] = useState<ProviderWithRating[] | null>(null)
   const [error,     setError]     = useState(false)
@@ -63,7 +65,7 @@ export default function Artists({ limit, appliedFilters }: ArtistsProps) {
     let cancelled = false
     async function load() {
       try {
-        const res = await fetch('/api/providers')
+        const res = await fetch('/api/providers', { cache: 'no-store' })
         if (!res.ok) throw new Error('failed')
         const rows: Provider[] = await res.json()
 

@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../../../../../auth'
-import { db } from '@/lib/db'
+import { db, seedStarterServicesForUser } from '@/lib/db'
 import { safeNotify } from '@/lib/notification'
-
 
 // PATCH: admin only — approve or reject an application
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -123,6 +122,18 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
        SET status = ?, reject_reason = ?, reviewed_by = ?, reviewed_at = ?
      WHERE id = ?
   `).run(newStatus, action === 'reject' ? reason : null, adminId, now, id)
+
+  // Seed a starter set of services from the application's specialties +
+  // priceRange so the artist is immediately listable / bookable. Without this
+  // the `services` table stays empty and the booking UI shows "No services
+  // listed yet" / "from —", blocking all bookings for the new artist.
+  if (action === 'approve' && applicantUserId) {
+    try {
+      seedStarterServicesForUser(applicantUserId)
+    } catch (e) {
+      console.error('[approve] failed to seed services:', e)
+    }
+  }
 
   // Notify the applicant with concrete next steps
   if (applicantUserId) {

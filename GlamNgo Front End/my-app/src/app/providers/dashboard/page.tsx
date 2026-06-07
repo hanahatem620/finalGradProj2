@@ -242,8 +242,8 @@ async function applyStatus(id: number, status: string) {
                 <p className="text-pink-500 bg-pink-100 p-2 w-fit rounded-full font-bold">{getInitials(dash?.reviews?.items[0]?.client_name ?? '')}</p>
             </div>
             <div>
-                <h2>{dash?.reviews?.items[0].client_name}</h2>
-                <p className="font-semibold">{dash?.reviews.items[0].comment}</p>
+                <h2>{dash?.reviews?.items[0]?.client_name || 'No reviews yet'}</h2>
+                <p className="font-semibold">{dash?.reviews?.items[0]?.comment || 'No comments yet'}</p>
             </div>
         </div>
 

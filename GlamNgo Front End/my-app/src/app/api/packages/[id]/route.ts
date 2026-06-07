@@ -3,14 +3,15 @@ import { db } from '@/lib/db';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const packageId = Number(params.id);
+    const { id } = await params;
+    const packageId = Number(id);
 
     const pkg = db()
       .prepare(`
-        SELECT id, name, price, description
+        SELECT id, name, price, description, duration
         FROM packages
         WHERE id = ?
       `)
@@ -25,9 +26,15 @@ export async function GET(
 
     const artists = db()
       .prepare(`
-        SELECT id, name
-        FROM users
-        WHERE role = 'artist'
+        SELECT
+          u.id,
+          p.name,
+          u.role
+        FROM users u
+        INNER JOIN profiles p
+          ON p.user_id = u.id
+        WHERE u.role IN ('ARTIST', 'HAIRDRESSER')
+        ORDER BY p.name
       `)
       .all();
 
@@ -35,6 +42,7 @@ export async function GET(
       package: pkg,
       artists,
     });
+
   } catch (e: any) {
     return NextResponse.json(
       { msg: e.message || 'Error fetching package' },

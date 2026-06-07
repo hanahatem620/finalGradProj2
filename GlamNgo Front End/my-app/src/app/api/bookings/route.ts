@@ -32,9 +32,23 @@ export async function POST(req: Request) {
   const client_location = (body.client_location || '').toString().trim();
   const serviceIds: number[] = Array.isArray(body.service_ids)
     ? body.service_ids.map(Number).filter(Boolean) : [];
-  if (!providerId || !start || !end || !client_location) {
-    return NextResponse.json({ msg: 'Missing fields' }, { status: 400 });
-  }
+
+    const packageId = body.package_id
+  ? Number(body.package_id)
+  : null;
+
+ if (
+  !providerId ||
+  !start ||
+  !end ||
+  !client_location ||
+  (serviceIds.length === 0 && !packageId)
+) {
+  return NextResponse.json(
+    { msg: 'Missing fields' },
+    { status: 400 }
+  );
+}
   try {
     const makeBooking = db().transaction(() => {
       const info = db().prepare(
@@ -44,9 +58,6 @@ export async function POST(req: Request) {
       ).run(uid, providerId, start, end, total, new Date().toISOString() , client_location);
       const bookingId = Number(info.lastInsertRowid);
 
-      // Persist every picked service as a booking_item so the admin detail
-      // page and receipt can show the line items (+ so discount math has a
-      // proper subtotal to recompute against).
       if (serviceIds.length > 0) {
         const services = db().prepare(
           `SELECT id, title, base_price FROM services
@@ -61,6 +72,36 @@ export async function POST(req: Request) {
           ins.run(bookingId, s.id, s.id, s.title, s.base_price);
         }
       }
+
+      if (packageId) {
+  const pkg = db().prepare(
+    `SELECT id, name, price
+     FROM packages
+     WHERE id = ?`
+  ).get(packageId) as any;
+
+  if (pkg) {
+    db().prepare(
+      `INSERT INTO booking_items
+       (
+         booking_id,
+         package_id,
+         item_type,
+         item_reference_id,
+         item_name,
+         price_at_booking
+       )
+       VALUES (?, ?, 'PACKAGE', ?, ?, ?)`
+    ).run(
+      bookingId,
+      pkg.id,
+      pkg.id,
+      pkg.name,
+      pkg.price
+    );
+  }
+}
+
       return bookingId;
     });
     const bookingId = makeBooking();

@@ -78,8 +78,7 @@ function ArtistPortfolioInner() {
   // ── Availability ───────────────────────────────────────────────────────
   const [segments,             setSegments]             = useState<Segment[]>([])
   const [availabilityLoading,  setAvailabilityLoading]  = useState(false)
-  // const [hasWorkingHours,      setHasWorkingHours]      = useState(true)
-
+  
   // ── Payment ────────────────────────────────────────────────────────────
   const [paymentMethod, setPaymentMethod] = useState<'FAWRY' | 'CARD'>('FAWRY')
   const [cardOpen,      setCardOpen]      = useState(false)
@@ -328,6 +327,7 @@ useEffect(() => {
             <p className='text-pink-500 font-semibold'>
               {provider.role === 'artist' ? 'Makeup Artist' : 'Hair Stylist'}
             </p>
+            <p className='text-gray-600'>{provider?.portfolio_description}</p>
             {avg !== null && (
               <div className='flex items-center gap-1 mt-1'>
                 <FaStar className='text-yellow-400' />

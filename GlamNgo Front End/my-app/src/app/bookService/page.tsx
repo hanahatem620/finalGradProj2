@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/input-group"
 import { CiCalendar } from "react-icons/ci"
 import { SearchIcon } from "lucide-react"
-import { SlLocationPin } from "react-icons/sl"
 import Artists from "../artists/page"
 import { useState } from "react"
 import { AppliedFilters } from "@/types/bookingSearch.type"
@@ -24,23 +23,19 @@ import { AppliedFilters } from "@/types/bookingSearch.type"
 export default function BookService() {
 
   const [serviceType, setServiceType] = useState('')
-  const [location,    setLocation]    = useState('')
-  const [date,        setDate]        = useState('')
   const [price,       setPrice]       = useState('')
   const [artistName,  setArtistName]  = useState('')
 
 
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>({
     serviceType: '',
-    location: '',
-    date: '',
     price: '',
     artistName: '',
   })
 
 
   function handleSearch() {
-    setAppliedFilters({ serviceType, location, date, price, artistName })
+    setAppliedFilters({ serviceType, price, artistName })
   }
 
   return (
@@ -55,7 +50,7 @@ export default function BookService() {
         </div>
 
         <div className=" bg-white p-8 mx-auto mt-4 shadow rounded-xl">
-          <FieldGroup className="flex lg:flex-row">
+          <FieldGroup className="flex lg:flex-row justify-center">
 
             <Field className="w-xs gap-1">
               <FieldLabel>Service Type</FieldLabel>
@@ -70,35 +65,6 @@ export default function BookService() {
                 <InputGroupAddon align="inline-start">
                   <SearchIcon className="text-muted-foreground" />
                 </InputGroupAddon>
-              </InputGroup>
-            </Field>
-
-            <Field className="w-xs gap-1">
-              <FieldLabel>Location</FieldLabel>
-              <InputGroup className="shadow-none rounded-full">
-                <InputGroupAddon>
-                  <InputGroupText><SlLocationPin /></InputGroupText>
-                </InputGroupAddon>
-                <InputGroupInput
-                  placeholder="Enter your location"
-                  value={location}
-                  onChange={e => setLocation(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                />
-              </InputGroup>
-            </Field>
-
-            <Field className="w-xs gap-1">
-              <FieldLabel>Date</FieldLabel>
-              <InputGroup className="shadow-none rounded-full">
-                <InputGroupAddon>
-                  <InputGroupText><CiCalendar /></InputGroupText>
-                </InputGroupAddon>
-                <InputGroupInput
-                  type="date"
-                  value={date}
-                  onChange={e => setDate(e.target.value)}
-                />
               </InputGroup>
             </Field>
 
@@ -139,16 +105,15 @@ export default function BookService() {
               Search Artist
             </Button>
 
-            {(appliedFilters.serviceType || appliedFilters.location ||
+            {(appliedFilters.serviceType ||
               appliedFilters.price || appliedFilters.artistName) && (
               <Button
                 variant="outline"
                 className="rounded-full border-pink-300 text-pink-500 hover:bg-pink-50"
                 onClick={() => {
-                  setServiceType(''); setLocation('')
-                  setDate('');        setPrice('')
+                  setServiceType('');   setPrice('');
                   setArtistName('')
-                  setAppliedFilters({ serviceType: '', location: '', date: '', price: '', artistName: '' })
+                  setAppliedFilters({ serviceType: '', price: '', artistName: '' })
                 }}
               >
                 Clear

@@ -93,7 +93,10 @@ export default function AdminApplications() {
     try {
       const r = await fetch('/api/artist-applications', { cache: 'no-store' })
       if (!r.ok) {
-        toast.error('Failed to load applications')
+        toast.error('Failed to load applications',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
       const data = await r.json()
@@ -119,10 +122,16 @@ export default function AdminApplications() {
       })
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Failed to approve')
+        toast.error(data?.msg || 'Failed to approve',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success(`Approved ${app.first_name} — artist account ready.`)
+      toast.success(`Approved ${app.first_name} — artist account ready.`,{
+        position: 'top-center',
+        duration: 2000,
+      })
       await load()
     } finally {
       setBusyId(null)
@@ -140,10 +149,16 @@ export default function AdminApplications() {
       })
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Failed to reject')
+        toast.error(data?.msg || 'Failed to reject',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success('Application rejected')
+      toast.success('Application rejected',{
+        position: 'top-center',
+        duration: 2000,
+      })
       setRejecting(null)
       setRejectReason('')
       await load()

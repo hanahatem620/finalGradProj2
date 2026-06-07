@@ -17,6 +17,8 @@ export interface Provider {
   image_url: string | null
   services: ProviderService[]
   status : string
+  phone?: string | null
+  portfolio_description: string | null
 }
 
 export interface ProviderWithRating extends Provider {

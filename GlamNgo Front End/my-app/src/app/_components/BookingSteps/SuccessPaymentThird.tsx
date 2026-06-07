@@ -3,7 +3,6 @@
 import { HiOutlineEnvelope } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { LuDownload } from "react-icons/lu";
 import { MdOutlineArrowBack } from "react-icons/md";

@@ -10,16 +10,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { CiWallet } from "react-icons/ci";
-import value from '../../../public/images/valueIns.png'
 import { LuCreditCard } from "react-icons/lu";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Provider } from "@/types/providerService.type";
-import { Segment } from "../_components/BookingTimeline/BookingTimeline";
 import {
   Dialog,
   DialogContent,
@@ -31,9 +27,7 @@ import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -44,11 +38,12 @@ import { IoColorPaletteOutline } from "react-icons/io5";
 export default function BackageBooking() {
 
  function formatDateYMD(d: Date) {
-   const y   = d.getFullYear()
-   const m   = (d.getMonth() + 1).toString().padStart(2, '0')
-   const day = d.getDate().toString().padStart(2, '0')
-   return `${y}-${m}-${day}`
- }
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+
+  return `${y}-${m}-${day}`
+}
  
  // Format card number with spaces every 4 digits
  function formatCardNumber(value: string) {
@@ -69,28 +64,23 @@ export default function BackageBooking() {
  // ══════════════════════════════════════════════════════════════════════════
  
    const router     = useRouter()
-   const params     = useSearchParams()
-   const providerId = Number(params.get('id'))
+  const params = useParams();
+const packageId = Number(params.id);
    const { data: session } = useSession()
  
-   // ── Provider & reviews ─────────────────────────────────────────────────
-   const [provider,     setProvider]     = useState<Provider | null>(null)
+  const [packageData, setPackageData] = useState<any>(null)
+const [artists, setArtists] = useState<any[]>([])
+const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null)
 
-   const [loading,      setLoading]      = useState(true)
-   const [error,        setError]        = useState(false)
+const [date, setDate] = useState<Date | undefined>()
+const [time, setTime] = useState('10:00')
+
+const [submitting, setSubmitting] = useState(false)
+
+const [fullName, setFullName] = useState('')
+const [phone, setPhone] = useState('')
+const [email, setEmail] = useState('')
  
-   // ── Booking selection ──────────────────────────────────────────────────
-   const [selected,    setSelected]    = useState<Set<number>>(new Set())
-   const [date,        setDate]        = useState<Date | undefined>(() => {
-     const d = new Date(); d.setDate(d.getDate() + 1); return d
-   })
-   const [time,        setTime]        = useState<string>('10:00')
-   const [submitting,  setSubmitting]  = useState(false)
- 
-   // ── Availability ───────────────────────────────────────────────────────
-   const [segments,             setSegments]             = useState<Segment[]>([])
-   const [availabilityLoading,  setAvailabilityLoading]  = useState(false)
-   // const [hasWorkingHours,      setHasWorkingHours]      = useState(true)
  
    // ── Payment ────────────────────────────────────────────────────────────
    const [paymentMethod, setPaymentMethod] = useState<'FAWRY' | 'CARD'>('FAWRY')
@@ -113,121 +103,121 @@ export default function BackageBooking() {
      cardExpiry.length === 5 &&
      cardCvv.length === 3
  
-   // ── Load provider + reviews ────────────────────────────────────────────
-   useEffect(() => {
-     let cancelled = false
-     async function load() {
-       if (!providerId) { setError(true); setLoading(false); return }
-       try {
-         const [pRes] = await Promise.all([
-           fetch(`/api/providers/${providerId}`)
-         ])
-         if (!pRes.ok) throw new Error('failed')
-         const p: Provider = await pRes.json()
-         if (!cancelled) {
-           setProvider(p)
-         }
-       } catch {
-         if (!cancelled) setError(true)
-       } finally {
-         if (!cancelled) setLoading(false)
-       }
-     }
-     load()
-     return () => { cancelled = true }
-   }, [providerId])
+
+
+  useEffect(() => {
+  async function loadPackage() {
+    try {
+      const res = await fetch(`/api/packages/${packageId}`)
+      if (!res.ok) throw new Error()
+
+      const data = await res.json()
+      console.log("Package details:", data)
+
+      setPackageData(data.package)
+      setArtists(data.artists)
+    } catch {
+      toast.error("Failed to load package", {
+        position: 'top-center',
+        duration: 2000,
+      })
+    }
+  }
+
+  if (packageId) loadPackage()
+}, [packageId])
  
 
- 
-   const selectedServices = provider?.services.filter(s => selected.has(s.id)) || []
-   const totalDuration    = selectedServices.reduce((s, x) => s + x.duration, 0)
-   const totalPrice       = selectedServices.reduce((s, x) => s + x.base_price, 0)
    const [clientLocation, setClientLocation] = useState("")
  
    // ── Booking + payment submission ───────────────────────────────────────
-   async function submitBooking(method: 'FAWRY' | 'CARD') {
-     if (!provider || !date) return
-     setSubmitting(true)
- 
-     const [hh, mm] = time.split(':').map(Number)
-     const start    = new Date(date)
-     start.setHours(hh, mm, 0, 0)
-     const end = new Date(start.getTime() + totalDuration * 60000)
-     // const [clientLocation, setClientLocation] = useState("")
- 
-     try {
-       // 1. Create booking
-       const bookingRes = await fetch('/api/bookings', {
-         method:  'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-           provider_id:     provider.id,
-           start_datetime:  start.toISOString(),
-           end_datetime:    end.toISOString(),
-           total_price:     totalPrice,
-           service_ids:     Array.from(selected),
-           client_location: clientLocation,
-         }),
-       })
- 
-       const bookingData = await bookingRes.json().catch(() => ({} as any))
-       if (!bookingRes.ok) {
-         toast.error(bookingData.msg || 'Booking failed', { position: 'top-center' })
-         return
-       }
- 
-       // 2. Record payment method (only 'FAWRY' or 'CARD' — no card details stored)
-       await fetch('/api/payments', {
-         method:  'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-           booking_id: bookingData.id,
-           method,
-           amount:     totalPrice,
-           status:     'COMPLETED',
-         }),
-       })
- 
-       toast.success('Booking confirmed!', { position: 'top-center' })
-       router.push('/client/booking')
- 
-     } finally {
-       setSubmitting(false)
-     }
-   }
+  async function submitBooking(method: 'FAWRY' | 'CARD') {
+  if (!packageData || !selectedArtistId || !date || !time) return
+
+  setSubmitting(true)
+
+  try {
+    const bookingRes = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider_id: selectedArtistId,
+        package_id: packageData.id,
+        start_datetime: `${date.toISOString().split('T')[0]}T${time}`,
+        end_datetime: `${date.toISOString().split('T')[0]}T${time}`,
+        total_price: packageData.price,
+        client_location: clientLocation,
+      })
+    })
+
+    const bookingData = await bookingRes.json()
+    if (!bookingRes.ok) {
+      toast.error(bookingData.msg || 'Booking failed', {
+        position: 'top-center',
+        duration: 2000,
+      })
+      return
+    }
+
+    console.log({
+  booking_id: bookingData.id,
+  method,
+  amount: packageData.price,
+  status: 'COMPLETED',
+})
+
+    await fetch('/api/payments', {
+      
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        booking_id: bookingData.id,
+        method,
+        amount: packageData.price,
+        status: 'COMPLETED',
+      })
+    })
+
+    toast.success('Booking confirmed!',{
+      position: 'top-center',
+      duration: 2000,
+    })
+    router.push('/client/booking')
+
+  } finally {
+    setSubmitting(false)
+  }
+}
  
    // ── Confirm button handler ─────────────────────────────────────────────
-   async function confirm() {
-     if (!session?.user) {
-       toast.error('Please log in first', { position: 'top-center' })
-       router.push('/LogIn')
-       return
-     }
-     if (!provider) return
-     if (selected.size === 0) {
-       toast.error('Please select at least one service', { position: 'top-center' })
-       return
-     }
-     if (!date || !time) {
-       toast.error('Please pick a date and time', { position: 'top-center' })
-       return
-     }
- 
-     if (paymentMethod === 'CARD') {
-       // Open card dialog — actual booking happens after card info is filled
-       setCardOpen(true)
-       return
-     }
- 
-       if (paymentMethod === 'FAWRY') {
-       // Open card dialog — actual booking happens after card info is filled
-       setFawry(true)
-       return
-     }
- 
-     // FAWRY — submit directly
-     await submitBooking('FAWRY')
-   }
+  async function confirm() {
+  if (!session?.user) {
+    toast.error('Please log in first',{
+      position:'top-center',
+      duration:2000
+    })
+    router.push('/LogIn')
+    return
+  }
+
+  if (!selectedArtistId) {
+    toast.error('Please select an artist', {
+      position: 'top-center',
+      duration: 2000,
+    })
+    return
+  }
+
+  if (paymentMethod === 'CARD') {
+    setCardOpen(true)
+    return
+  }
+
+  if (paymentMethod === 'FAWRY') {
+    setFawry(true)
+    return
+  }
+}
  
  useEffect(() => {
    if (fawry) {
@@ -268,8 +258,8 @@ export default function BackageBooking() {
               </div>
 
               <div className='bg-linear-to-r from-pink-500 via-purple-500 to-violet-600 p-5 rounded-md text-white font-bold'>
-                <h2 className='text-2xl'>Event Ready Bundle</h2>
-                <h3 className='text-xl'>850 EGP</h3>
+                <h2 className='text-2xl'>{packageData?.name}</h2>
+                <h3 className='text-xl'>{packageData?.price} EGP</h3>
               </div>
 
             </div>
@@ -282,14 +272,24 @@ export default function BackageBooking() {
         <FieldLabel htmlFor="Full-name">
           <GoPerson />
           Full Name</FieldLabel>
-        <Input id="Full-name" placeholder="Enter Your Full Name" className="bg-gray-100" type='text' />
+        <Input id="Full-name" placeholder="Enter Your Full Name" className="bg-gray-100" type='text'
+         value={fullName}
+  onChange={(e) => setFullName(e.target.value)}
+        />
       </Field>
 
       <Field className="gap-1">
         <FieldLabel htmlFor="Phone-Number">
           <LuPhone />
           Phone Number</FieldLabel>
-        <Input id="Phone-Number" placeholder="Enter Your Phone Number" className="bg-gray-100" type='tel'/>
+          <Input
+  id="Phone-Number"
+  placeholder="Enter Your Phone Number"
+  className="bg-gray-100"
+  type="tel"
+  value={phone}
+  onChange={(e) => setPhone(e.target.value)}
+/>
       </Field>
                 </div>
 
@@ -298,28 +298,46 @@ export default function BackageBooking() {
         <FieldLabel htmlFor="Email">
           <HiOutlineEnvelope />
           Email Address</FieldLabel>
-        <Input id="Email" placeholder="Enter Your Email address" className="bg-gray-100" type='email' />
+          <Input
+  id="Email"
+  placeholder="Enter Your Email address"
+  className="bg-gray-100"
+  type="email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+/>
       </Field>
 
       <div className="w-full">
-        <FieldLabel className="mb-1">
-          <IoColorPaletteOutline />
-           Available artists</FieldLabel>
-      <Select >
-      <SelectTrigger className="w-full bg-gray-100">
-        <SelectValue placeholder="Select an artist" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
-          <SelectItem value="apple">Apple</SelectItem>
-          <SelectItem value="banana">Banana</SelectItem>
-          <SelectItem value="blueberry">Blueberry</SelectItem>
-          <SelectItem value="grapes">Grapes</SelectItem>
-          <SelectItem value="pineapple">Pineapple</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+      <FieldLabel className="mb-1">
+  <IoColorPaletteOutline />
+  Available Artists
+</FieldLabel>
+
+<Select
+  value={selectedArtistId ? String(selectedArtistId) : ""}
+  onValueChange={(v) => {
+    setSelectedArtistId(Number(v))
+  }}
+>
+  <SelectTrigger className="w-full bg-gray-100">
+    <SelectValue placeholder="Select an artist" />
+  </SelectTrigger>
+
+  <SelectContent>
+    {artists?.length ? (
+      artists.map((a) => (
+        <SelectItem key={a.id} value={String(a.id)}>
+          {a.name} ({a.role})
+        </SelectItem>
+      ))
+    ) : (
+      <SelectItem value="none" disabled>
+        No artists available
+      </SelectItem>
+    )}
+  </SelectContent>
+</Select>
       </div>
 
 
@@ -331,9 +349,12 @@ export default function BackageBooking() {
         <FieldLabel htmlFor="Preferred-Date">
           <MdOutlineCalendarToday />
           Preferred Date</FieldLabel>
-        <Input id="Preferred-Date" type="date"
+        <Input
+  id="Preferred-Date"
+  type="date"
   value={date ? formatDateYMD(date) : ''}
-  onChange={(e) => setDate(new Date(e.target.value))} className="bg-gray-100" />
+  onChange={(e) => setDate(new Date(e.target.value))}
+/>
       </Field>
 
       <Field className="gap-1">
@@ -349,8 +370,12 @@ export default function BackageBooking() {
                 </div>
       
       <Field>
-      <FieldLabel htmlFor="textarea-message">Additional Notes (Optional)</FieldLabel>
-      <Textarea id="textarea-message" placeholder="Any special requests or details we should know..." />
+      <FieldLabel htmlFor="textarea-message">Your Location</FieldLabel>
+      <Textarea
+  value={clientLocation}
+  onChange={(e) => setClientLocation(e.target.value)}
+  placeholder="Enter your location"
+/>
     </Field>
       
     <div className="flex gap-2">
@@ -413,7 +438,7 @@ export default function BackageBooking() {
             </RadioGroup>
           </div>
 
-             <Dialog open={cardOpen} onOpenChange={setCardOpen}>
+      <Dialog open={cardOpen} onOpenChange={setCardOpen}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle className='flex items-center gap-2'>
@@ -483,11 +508,10 @@ export default function BackageBooking() {
             <div className='bg-gray-50 rounded-lg p-3 text-sm space-y-1'>
               <div className='flex justify-between text-gray-500'>
                 <span>Services</span>
-                <span>{selectedServices.length} selected</span>
               </div>
               <div className='flex justify-between font-bold text-base'>
                 <span>Total</span>
-                <span className='text-pink-500'>EGP {totalPrice.toFixed(2)}</span>
+                <span className='text-pink-500'>EGP {packageData?.price}</span>
               </div>
             </div>
 
@@ -509,7 +533,7 @@ export default function BackageBooking() {
                 disabled={!cardValid || submitting}
                 onClick={handleCardPay}
               >
-                {submitting ? 'Processing…' : `Pay EGP ${totalPrice.toFixed(2)}`}
+                {submitting ? 'Processing…' : `Pay EGP ${packageData?.price}`}
               </Button>
             </div>
 
@@ -552,12 +576,12 @@ export default function BackageBooking() {
       <div className='bg-gray-50 rounded-lg p-3 text-sm space-y-1'>
         <div className='flex justify-between text-gray-500'>
           <span>Services</span>
-          <span>{selectedServices.length} selected</span>
+          {/* <span>{selectedServices.length} selected</span> */}
         </div>
         <div className='flex justify-between font-bold text-base'>
           <span>Total</span>
           <span className='text-pink-500'>
-            EGP {totalPrice.toFixed(2)}
+            EGP {packageData?.price}
           </span>
         </div>
       </div>
@@ -583,7 +607,7 @@ export default function BackageBooking() {
 
     </div>
   </DialogContent>
-</Dialog>
+      </Dialog>
 
 
       </div>
