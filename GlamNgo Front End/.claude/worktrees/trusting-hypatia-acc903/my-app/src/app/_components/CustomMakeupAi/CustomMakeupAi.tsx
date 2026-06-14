@@ -95,7 +95,6 @@ export default function MakeupCard() {
           })
     
           const image = await CustomMakeup(base64, config())
-          // console.log('CONFIG' ,config);
     
           
           setCustomResult(image)

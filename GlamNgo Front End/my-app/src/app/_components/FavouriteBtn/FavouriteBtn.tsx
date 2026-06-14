@@ -26,6 +26,23 @@ async function toggleFav() {
     body: JSON.stringify({ artist_id: artistId }),
   });
 
+
+    if (res.status === 401) {
+    toast.error('Please login first', {
+      position: 'top-center',
+      duration: 2000,
+    });
+    return;
+  }
+
+  if (res.status === 403) {
+    toast.error('Only clients can add favorites', {
+      position: 'top-center',
+      duration: 2000,
+    });
+    return;
+  }
+
   if (!res.ok) return;
 
   setIsFav(!isFav);

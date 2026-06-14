@@ -44,7 +44,6 @@ export default function AiFeatures() {
     async function flag() {
       const res = await AiTryOne()
       setLooks(res.looks)
-      // console.log('aifaeture res' , res)
     }
 
     flag()
@@ -68,7 +67,6 @@ export default function AiFeatures() {
     setResult(image)
   } catch (err) {
     toast.error("Something went wrong")
-    // console.log(err)
   } finally {
     setCustomLoading(false)
   }

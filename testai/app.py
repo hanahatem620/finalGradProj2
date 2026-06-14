@@ -61,7 +61,6 @@ MAKEUP_LOOKS = [
 ]
 
 def base64_to_image(base64_string):
-    """تحويل base64 إلى صورة"""
     try:
         if ',' in base64_string:
             base64_string = base64_string.split(',')[1]
@@ -75,7 +74,6 @@ def base64_to_image(base64_string):
         return None
 
 def image_to_base64(image):
-    """تحويل صورة إلى base64"""
     try:
         _, buffer = cv2.imencode('.png', image)
         img_str = base64.b64encode(buffer).decode()

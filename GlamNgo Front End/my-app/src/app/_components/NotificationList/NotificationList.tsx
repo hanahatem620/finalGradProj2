@@ -1,25 +1,9 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Bell, Check, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ApiPayload, NotificationItem } from '@/types/NotificationItem.type'
-
-// interface NotificationItem {
-//   id: number
-//   user_id: number
-//   type: string
-//   title: string
-//   body: string
-//   is_read: number
-//   action_url: string | null
-//   created_at: string
-// }
-
-// interface ApiPayload {
-//   unread_count: number
-//   notifications: NotificationItem[]
-// }
 
 function bucket(iso: string): 'today' | 'yesterday' | 'thisWeek' | 'earlier' {
   const t = Date.parse(iso)
@@ -47,44 +31,99 @@ function fmtTime(iso: string): string {
 }
 
 const TYPE_STYLES: Record<string, { bg: string; fg: string }> = {
-  BOOKING_NEW: { bg: 'bg-yellow-100', fg: 'text-yellow-600' },
-  BOOKING_CANCELLED: { bg: 'bg-red-100', fg: 'text-red-600' },
-  BOOKING_COMPLETED: { bg: 'bg-green-100', fg: 'text-green-600' },
-  PAYMENT_RECEIVED: { bg: 'bg-emerald-100', fg: 'text-emerald-600' },
-  REVIEW_NEW: { bg: 'bg-blue-100', fg: 'text-blue-600' },
-  SUPPORT_REPLY: { bg: 'bg-purple-100', fg: 'text-purple-600' },
-  SYSTEM: { bg: 'bg-pink-100', fg: 'text-pink-600' },
+  BOOKING_NEW:        { bg: 'bg-yellow-100',  fg: 'text-yellow-600'  },
+  BOOKING_CANCELLED:  { bg: 'bg-red-100',     fg: 'text-red-600'     },
+  BOOKING_COMPLETED:  { bg: 'bg-green-100',   fg: 'text-green-600'   },
+  PAYMENT_RECEIVED:   { bg: 'bg-emerald-100', fg: 'text-emerald-600' },
+  REVIEW_NEW:         { bg: 'bg-blue-100',    fg: 'text-blue-600'    },
+  SUPPORT_REPLY:      { bg: 'bg-purple-100',  fg: 'text-purple-600'  },
+  SYSTEM:             { bg: 'bg-pink-100',    fg: 'text-pink-600'    },
+}
+
+type Preferences = {
+  new_booking_requests: boolean
+  appointment_reminders: boolean
+  system_updates: boolean
 }
 
 export default function NotificationsList() {
-  const [items, setItems] = useState<NotificationItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [unread, setUnread] = useState(0)
+  const [items, setItems]           = useState<NotificationItem[]>([])
+  const [loading, setLoading]       = useState(true)
+  const [prefs, setPrefs]           = useState<Preferences | null>(null)
+  const [prefsLoaded, setPrefsLoaded] = useState(false)
   const router = useRouter()
 
-  async function load() {
-    try {
-      const r = await fetch('/api/notification', { cache: 'no-store' })
-      if (!r.ok) {
-        setItems([])
-        setLoading(false)
-        return
-      }
-      const data: ApiPayload = await r.json()
-      setItems(data.notifications || [])
-      setUnread(data.unread_count || 0)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // ─── load everything once ───────────────────────────────────────────────
   useEffect(() => {
-    load()
+    async function loadAll() {
+      setLoading(true)
+      try {
+        const [prefsRes, notifRes] = await Promise.all([
+          fetch('/api/notificationPreference'),
+          fetch('/api/notification', { cache: 'no-store' }),
+        ])
+
+        if (prefsRes.ok) {
+  const prefsData = await prefsRes.json()
+
+  setPrefs({
+    new_booking_requests: !!prefsData.new_booking_requests,
+    appointment_reminders: !!prefsData.appointment_reminders,
+    system_updates: !!prefsData.system_updates,
+  })
+
+  setPrefsLoaded(true)
+}else {
+  setPrefsLoaded(true)
+  setPrefs({
+    new_booking_requests: true,
+    appointment_reminders: true,
+    system_updates: true,
+  })
+}
+
+        if (notifRes.ok) {
+          const notifData: ApiPayload = await notifRes.json()
+          setItems(notifData.notifications || [])
+        }
+
+      } catch (err) {
+        console.error('Failed to load notifications', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadAll()
   }, [])
 
+  // ─── filter based on prefs ───────────────────────────────────────────────
+  const filteredItems = useMemo(() => {
+    if (!prefsLoaded) return items
+
+    return items.filter(n => {
+      switch (n.type) {
+        case 'BOOKING_NEW':
+          return prefs?.new_booking_requests ?? true
+        case 'BOOKING_CANCELLED':
+        case 'BOOKING_COMPLETED':
+          return prefs?.appointment_reminders ?? true
+        case 'SYSTEM':
+        default:
+          return true
+      }
+    })
+  }, [items, prefs, prefsLoaded])
+
+  // ─── unread count من الـ filteredItems مش من الـ API ────────────────────
+  const unreadCount = useMemo(
+    () => filteredItems.filter(n => !n.is_read).length,
+    [filteredItems]
+  )
+
+  // ─── actions ─────────────────────────────────────────────────────────────
   async function markRead(id: number) {
     setItems(list => list.map(n => (n.id === id ? { ...n, is_read: 1 } : n)))
-    setUnread(u => Math.max(0, u - 1))
     await fetch('/api/notification', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -93,9 +132,8 @@ export default function NotificationsList() {
   }
 
   async function markAll() {
-    if (!unread) return
+    if (!unreadCount) return
     setItems(list => list.map(n => ({ ...n, is_read: 1 })))
-    setUnread(0)
     await fetch('/api/notification', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -104,9 +142,7 @@ export default function NotificationsList() {
   }
 
   async function remove(id: number) {
-    const target = items.find(n => n.id === id)
     setItems(list => list.filter(n => n.id !== id))
-    if (target && !target.is_read) setUnread(u => Math.max(0, u - 1))
     await fetch('/api/notification', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -119,25 +155,25 @@ export default function NotificationsList() {
     if (n.action_url) router.push(n.action_url)
   }
 
-  const groups: Record<string, NotificationItem[]> = {
-    today: [],
-    yesterday: [],
-    thisWeek: [],
-    earlier: [],
-  }
-  for (const n of items) groups[bucket(n.created_at)].push(n)
+  // ─── group ───────────────────────────────────────────────────────────────
+  const groups = useMemo(() => {
+    const g: Record<string, NotificationItem[]> = {
+      today: [], yesterday: [], thisWeek: [], earlier: [],
+    }
+    for (const n of filteredItems) g[bucket(n.created_at)].push(n)
+    return g
+  }, [filteredItems])
 
   const groupTitles: { key: keyof typeof groups; label: string }[] = [
-    { key: 'today', label: 'TODAY' },
+    { key: 'today',     label: 'TODAY'     },
     { key: 'yesterday', label: 'YESTERDAY' },
-    { key: 'thisWeek', label: 'THIS WEEK' },
-    { key: 'earlier', label: 'EARLIER' },
+    { key: 'thisWeek',  label: 'THIS WEEK' },
+    { key: 'earlier',   label: 'EARLIER'   },
   ]
 
+  // ─── render ──────────────────────────────────────────────────────────────
   if (loading) {
-    return (
-      <div className='py-20 text-center text-gray-500'>Loading...</div>
-    )
+    return <div className='py-20 text-center text-gray-500'>Loading...</div>
   }
 
   return (
@@ -146,12 +182,12 @@ export default function NotificationsList() {
         <div>
           <h1 className='font-bold text-3xl'>Notifications</h1>
           <p className='text-gray-500 text-sm mt-1'>
-            {unread > 0 ? `${unread} unread` : 'All caught up'}
+            {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
           </p>
         </div>
         <Button
           onClick={markAll}
-          disabled={unread === 0}
+          disabled={unreadCount === 0}
           variant='outline'
           className='border-pink-300 text-pink-600 hover:bg-pink-50'
         >
@@ -160,7 +196,7 @@ export default function NotificationsList() {
         </Button>
       </div>
 
-      {items.length === 0 && (
+      {filteredItems.length === 0 && (
         <div className='border border-dashed border-gray-300 rounded-md p-12 text-center'>
           <Bell className='w-10 h-10 text-gray-300 mx-auto mb-3' />
           <p className='text-gray-500'>You don&apos;t have any notifications yet</p>
@@ -185,26 +221,19 @@ export default function NotificationsList() {
                         : 'border-pink-200 bg-pink-50/40'
                     }`}
                   >
-                    <div
-                      className={`${style.bg} ${style.fg} w-fit h-fit p-2 rounded-full shrink-0`}
-                    >
+                    <div className={`${style.bg} ${style.fg} w-fit h-fit p-2 rounded-full shrink-0`}>
                       <Bell className='text-lg w-5 h-5' />
                     </div>
-                    <div
-                      className='flex-1 min-w-0 cursor-pointer'
-                      onClick={() => open(n)}
-                    >
+
+                    <div className='flex-1 min-w-0 cursor-pointer' onClick={() => open(n)}>
                       <div className='flex items-center gap-2'>
                         <h2 className='font-bold'>{n.title}</h2>
-                        {!n.is_read && (
-                          <span className='w-2 h-2 rounded-full bg-pink-500' />
-                        )}
+                        {!n.is_read && <span className='w-2 h-2 rounded-full bg-pink-500' />}
                       </div>
                       <p className='text-gray-600 mt-1'>{n.body}</p>
-                      <p className='text-gray-400 text-sm mt-1'>
-                        {fmtTime(n.created_at)}
-                      </p>
+                      <p className='text-gray-400 text-sm mt-1'>{fmtTime(n.created_at)}</p>
                     </div>
+
                     <button
                       type='button'
                       onClick={() => remove(n.id)}

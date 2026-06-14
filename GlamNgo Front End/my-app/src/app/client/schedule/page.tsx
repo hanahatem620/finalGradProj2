@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FiClock } from "react-icons/fi";
-import Image from 'next/image'
-import { LuCalendarCheck2 } from "react-icons/lu";
+
 
 export default function clientSchedule() {
 

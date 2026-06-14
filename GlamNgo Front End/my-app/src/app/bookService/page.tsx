@@ -12,7 +12,6 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
-import { CiCalendar } from "react-icons/ci"
 import { SearchIcon } from "lucide-react"
 import Artists from "../artists/page"
 import { useState } from "react"

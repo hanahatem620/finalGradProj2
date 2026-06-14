@@ -21,7 +21,7 @@ export default function AboutUs() {
     <div className='bg-linear-to-l from-pink-50 to-purple-50 py-20'>
         <div className='text-center'>
             <h2 className='text-4xl font-bold'>About GlamNgo</h2>
-            <p className='text-gray-500 max-w-140 mx-auto'>Connecting beauty enthusiasts with top-rated hair and makeup artists for every occasion. We're revolutionizing the beauty industry one appointment at a time.</p>
+            <p className='text-gray-500 max-w-140 mx-auto'>Connecting beauty enthusiasts with top-rated hair and makeup artists for every occasion. We&#39;re revolutionizing the beauty industry one appointment at a time.</p>
         </div>
     </div>
 
@@ -39,7 +39,7 @@ export default function AboutUs() {
             <p className='text-gray-500 max-w-125'>At GlamNgo, we believe everyone deserves to look and feel their best. 
                 Our platform makes it easy to discover and book talented beauty professionals 
                 who bring their expertise right to your doorstep.</p>
-                <p className='text-gray-500 max-w-130 mt-4'>We're committed to empowering artists with the tools they need to grow their business 
+                <p className='text-gray-500 max-w-130 mt-4'>We&#39;re committed to empowering artists with the tools they need to grow their business 
                     while providing customers with seamless, reliable beauty services for 
                     weddings, events, and everyday glam.</p>
 

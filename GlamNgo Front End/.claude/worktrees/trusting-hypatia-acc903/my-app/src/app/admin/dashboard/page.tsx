@@ -7,7 +7,6 @@ import React from 'react'
 export default function Dashboard() {
 
      const {data: session} = useSession()
-      // console.log(session);
       
       function logOut(){
         signOut({
@@ -17,7 +16,6 @@ export default function Dashboard() {
 
       async function getDashboard(){
         const res = await adminDashboard()
-        console.log(res);
         
       }
 

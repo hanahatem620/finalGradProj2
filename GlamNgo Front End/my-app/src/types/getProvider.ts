@@ -2,7 +2,7 @@ export interface GetProvider {
   id: number
   user_id: number
   email: string
-  phone: any
+  phone: string
   role: string
   status: string
   name: string

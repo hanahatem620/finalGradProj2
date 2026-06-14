@@ -17,7 +17,7 @@ export default function ClientLayout({children,}: { children: React.ReactNode}) 
 
       <AsideNav open={open} setOpen={setOpen} />
 
-      <main className="flex-1 lg:ml-40 bg-white min-h-screen">
+      <main className="flex-1 lg:ml-40 md:ml-64 bg-white min-h-screen">
         {children}
       </main>
 

@@ -19,7 +19,6 @@ import { useSession } from "next-auth/react"
 import { ProviderBook } from "@/types/providerBooking.type"
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -31,7 +30,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { FaCalendarTimes } from "react-icons/fa";
 import * as React from "react"
-import { format } from "date-fns"
 import { ChevronDownIcon } from "lucide-react"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -519,7 +517,7 @@ async function createTimeOff() {
                 <div>
 
                   <h2 className="font-bold text-2xl">
-                    Today's Bookings
+                    Today&#39;s Bookings
                   </h2>
 
                   {/* SAMPLE CARD */}

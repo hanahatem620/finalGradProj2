@@ -77,7 +77,7 @@ export default function helpCenter() {
       <AccordionItem value="item-2">
         <AccordionTrigger className="bg-gray-200 p-2 hover:no-underline hover:bg-gray-300">Can I reschedule my booking?</AccordionTrigger>
         <AccordionContent className="text-gray-500">
-          Yes, you can reschedule up to 24 hours before your appointment through the 'My Bookings' page.
+          Yes, you can reschedule up to 24 hours before your appointment through the &#39;My Bookings&#39; page.
         </AccordionContent>
       </AccordionItem>
 
@@ -100,7 +100,7 @@ export default function helpCenter() {
       <AccordionItem value="item-5">
         <AccordionTrigger className="bg-gray-200 p-2 hover:no-underline hover:bg-gray-300">When will I be charged?</AccordionTrigger>
         <AccordionContent className="text-gray-500">
-        You'll be charged after your appointment is completed.
+        You&#39;ll be charged after your appointment is completed.
         </AccordionContent>
       </AccordionItem>
 

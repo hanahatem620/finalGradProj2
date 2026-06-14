@@ -1,18 +1,13 @@
 'use client'
-import { Button } from "@/components/ui/button";
 import { FiBriefcase } from "react-icons/fi";
-import { PiMagicWand } from "react-icons/pi";
 import { BiDollar } from "react-icons/bi";
 import { FaRegBell } from "react-icons/fa6";
 import { HiMiniArrowTrendingUp } from "react-icons/hi2";
-import { MdOutlineShield } from "react-icons/md";
-import { LuClock4 } from "react-icons/lu";
 import { FiCalendar } from "react-icons/fi";
 import { GoPeople } from "react-icons/go";
 import { FiAward } from "react-icons/fi";
 import { LuChartColumn } from "react-icons/lu";
 import ArtistFormBtn from "../_components/ArtistFormBtn/ArtistFormBtn";
-import Link from "next/link";
 
 
 
@@ -211,7 +206,7 @@ export default function BecomeAPro() {
 
                 <div className="artistCap text-center">
                     <h1 className="font-bold text-3xl">Artist Requirements</h1>
-                    <p className="text-gray-500">To join our platform, you'll need to meet these simple requirements</p>
+                    <p className="text-gray-500">To join our platform, you&#39;ll need to meet these simple requirements</p>
                 </div>
 
                 <div className="mt-5 flex justify-center">

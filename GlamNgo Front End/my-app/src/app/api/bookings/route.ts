@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../auth';
 import { db } from '@/lib/db';
+import { handleBookingNotification } from '@/lib/bookingNotifications';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ msg: 'Unauthorized' }, { status: 401 });
   }
+
+
   const uid = Number(session.user.id);
   const rows = db().prepare(
     `SELECT b.*, up.name AS provider_name
@@ -23,6 +26,14 @@ export async function POST(req: Request) {
   if (!session?.user?.id) {
     return NextResponse.json({ msg: 'Unauthorized' }, { status: 401 });
   }
+
+  //     if (session.user.role !== 'CLIENT') {
+  //   return NextResponse.json(
+  //     { msg: 'Only clients can make bookings' },
+  //     { status: 403 }
+  //   );
+  // }
+  
   const uid = Number(session.user.id);
   const body = await req.json().catch(() => ({} as any));
   const providerId = Number(body.provider_id);
@@ -48,6 +59,8 @@ export async function POST(req: Request) {
     { msg: 'Missing fields' },
     { status: 400 }
   );
+
+  
 }
   try {
     const makeBooking = db().transaction(() => {
@@ -72,6 +85,8 @@ export async function POST(req: Request) {
           ins.run(bookingId, s.id, s.id, s.title, s.base_price);
         }
       }
+
+      
 
       if (packageId) {
   const pkg = db().prepare(
@@ -105,6 +120,15 @@ export async function POST(req: Request) {
       return bookingId;
     });
     const bookingId = makeBooking();
+
+    handleBookingNotification({
+  bookingId,
+  clientId: uid,
+  providerId,
+  start,
+  location: client_location,
+})
+
     return NextResponse.json({ id: bookingId, status: 'PENDING' }, { status: 201 });
   } catch (e: any) {
     return NextResponse.json({ msg: e?.message || 'Booking failed' }, { status: 500 });

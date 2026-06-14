@@ -95,12 +95,10 @@ export default function MakeupCard() {
           })
     
           const image = await CustomMakeup(base64, config())
-          // console.log('CONFIG' ,config);
     
           
           setCustomResult(image)
         } catch (e) {
-          console.error(e)
           toast.error("Failed to apply makeup", { position: 'top-center' })
         } finally {
           setCustomLoading(false)

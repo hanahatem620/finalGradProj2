@@ -9,23 +9,16 @@ import { Separator } from '@/components/ui/separator'
 import { BsDot } from 'react-icons/bs'
 import fallbackPhoto from '../../../public/images/artistPhoto.png'
 import { Provider, ProviderService, ProviderWithRating } from '@/types/providerService.type'
-import { CiHeart } from "react-icons/ci";
 import FavouriteBtn from '../_components/FavouriteBtn/FavouriteBtn'
 
 
-// ── Props ──────────────────────────────────────────────────────────────────
 interface AppliedFilters {
   serviceType: string
-  location: string
-  date: string
   price: string
   artistName: string
 }
 
 interface ArtistsProps {
-  // FIX — accepts the snapshot object instead of 5 separate live strings + a boolean.
-  // The component re-filters only when this object reference changes,
-  // which only happens when the Search button is pressed in BookService.
   appliedFilters?: AppliedFilters
 }
 
@@ -90,15 +83,15 @@ export default function Artists({ appliedFilters }: ArtistsProps) {
     return () => { cancelled = true }
   }, [])
 
-  // FIX — filter runs only when appliedFilters changes (i.e. button was pressed).
-  // If no filters are passed (home page usage), show all providers.
+
   const filtered = (providers || []).filter(p => {
     if (!appliedFilters) return true
 
-    const { serviceType, location, price, artistName } = appliedFilters
+      const { serviceType, price, artistName } = appliedFilters
+
 
     // If all fields are empty, show everyone
-    const noFilters = !serviceType && !location && !price && !artistName
+    const noFilters = !serviceType && !price && !artistName
     if (noFilters) return true
 
     const matchService =
@@ -107,9 +100,6 @@ export default function Artists({ appliedFilters }: ArtistsProps) {
         s.title.toLowerCase().includes(serviceType.toLowerCase())
       )
 
-    const matchLocation =
-      !location ||
-      (p.location || '').toLowerCase().includes(location.toLowerCase())
 
     const matchPrice =
       !price ||
@@ -119,8 +109,12 @@ export default function Artists({ appliedFilters }: ArtistsProps) {
       !artistName ||
       p.name.toLowerCase().includes(artistName.toLowerCase())
 
-    return matchService && matchLocation && matchPrice && matchArtist
+    return matchService && matchPrice && matchArtist
+
+    
   })
+
+  const displayed = appliedFilters ? filtered : filtered.slice(0, 4)
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (
@@ -138,8 +132,7 @@ export default function Artists({ appliedFilters }: ArtistsProps) {
               <h1 className='font-bold text-3xl'>Artists</h1>
             <p className='text-gray-500'>
               {appliedFilters &&
-              (appliedFilters.serviceType || appliedFilters.location ||
-               appliedFilters.price       || appliedFilters.artistName)
+              (appliedFilters.serviceType || appliedFilters.price || appliedFilters.artistName)
                 ? `${filtered.length} result${filtered.length !== 1 ? 's' : ''} found`
                 : 'Top-rated professionals ready to serve you'
               }
@@ -169,8 +162,7 @@ export default function Artists({ appliedFilters }: ArtistsProps) {
           {providers && filtered.length === 0 && (
             <div className='col-span-full text-center py-10 text-gray-500'>
               {appliedFilters &&
-              (appliedFilters.serviceType || appliedFilters.location ||
-               appliedFilters.price       || appliedFilters.artistName)
+              (appliedFilters.serviceType || appliedFilters.price || appliedFilters.artistName)
                 ? 'No artists match your search. Try different filters.'
                 : 'No artists available yet — check back soon!'
               }
@@ -178,7 +170,7 @@ export default function Artists({ appliedFilters }: ArtistsProps) {
           )}
 
           {/* Artist cards */}
-          {filtered.map((p, i) => {
+          {displayed.map((p, i) => {
             const avatar   = p.image_url ? `/uploads/${p.image_url}` : null
             const pills    = servicePills(p.services)
             const minPrice = startingFrom(p.services)

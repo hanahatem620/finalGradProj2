@@ -18,7 +18,6 @@ import { FiCreditCard } from "react-icons/fi";
 import {
   Alert,
   AlertDescription,
-  AlertTitle,
 } from "@/components/ui/alert"
 import cele from '../../../public/images/confetti.png'
 import Image from "next/image";
@@ -352,7 +351,7 @@ export default function GiftCard() {
 
         <h1 className="flex items-center font-bold gap-2 mb-2">
           <AiOutlineGift className="text-pink-500"/>
-          What's Included
+          What&#39;s Included
         </h1>
 
         <ul>
@@ -501,7 +500,7 @@ export default function GiftCard() {
           <div>
             <h4 className="font-bold">Email confirmation sent</h4>
           <p className="text-sm text-gray-500">
-            We've sent a confirmation email with the gift 
+            We&#39;ve sent a confirmation email with the gift 
             card details to both you and the recipient.</p>
           </div>
         </li>

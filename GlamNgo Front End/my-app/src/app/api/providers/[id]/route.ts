@@ -28,3 +28,19 @@ export async function GET(
 
   return NextResponse.json(serializeProvider(row));
 }
+
+export async function PATCH(
+  req: Request,
+  ctx: { params: Promise<{ id: string }> }
+) {
+  const { id } = await ctx.params;
+  const body = await req.json();
+
+  db().prepare(`
+    UPDATE users
+    SET role = ?
+    WHERE id = ?
+  `).run(body.role, Number(id));
+
+  return NextResponse.json({ success: true });
+}

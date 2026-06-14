@@ -30,8 +30,7 @@ const [services , setServices] = useState<any>(null)
 
 async function getArtists(id : number){
   const res = await getAllServices(id)
-  setServices(res)
-  console.log(res)
+
 }
 
 // useEffect(() => {

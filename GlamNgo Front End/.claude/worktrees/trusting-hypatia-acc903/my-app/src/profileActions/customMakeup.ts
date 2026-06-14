@@ -17,7 +17,6 @@ export async function CustomMakeup(base64: string, config:MakeupConfig) {
   }
 
   const data = await res.json();
-  // console.log(data);
   
 
   if (!data.success) {

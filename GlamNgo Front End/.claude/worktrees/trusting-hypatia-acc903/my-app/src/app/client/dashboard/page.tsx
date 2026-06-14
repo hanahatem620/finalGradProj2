@@ -23,7 +23,6 @@ export default function ClientDashboard() {
 async function getLoggedUser(){
     const res = await getUser()
     setUser(res)
-    // console.log(res);
 
 
 }

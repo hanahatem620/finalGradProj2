@@ -46,7 +46,7 @@ export default function ClaimNow() {
           <ul className='flex flex-col gap-2'>
             <li className='flex items-center gap-1'>
               <span className='bg-pink-500 px-2 py-0.5 w-fit rounded-full text-white'>1</span>
-              <h3 className='text-gray-500 '>Click 'Claim Offer' below to add to your account</h3>
+              <h3 className='text-gray-500 '>Click &#39;Claim Offer&#39; below to add to your account</h3>
             </li>
 
             <li className='flex items-center gap-1'>

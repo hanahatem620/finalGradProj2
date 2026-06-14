@@ -103,7 +103,10 @@ export default function AdminArtists() {
     try {
       const r = await fetch('/api/providers', { cache: 'no-store' })
       if (!r.ok) {
-        toast.error('Failed to load providers')
+        toast.error('Failed to load providers',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
       const data = await r.json()
@@ -147,7 +150,10 @@ export default function AdminArtists() {
   async function saveAdd() {
     if (busy) return
     if (!draft.name.trim() || !draft.email.trim()) {
-      toast.error('Name and email are required')
+      toast.error('Name and email are required',{
+        position: 'top-center',
+        duration: 2000,
+      })
       return
     }
     setBusy(true)
@@ -159,10 +165,16 @@ export default function AdminArtists() {
       })
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Failed to add artist')
+        toast.error(data?.msg || 'Failed to add artist',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success(`Added ${draft.name}`)
+      toast.success(`Added ${draft.name}`,{
+        position: 'top-center',
+        duration: 2000,
+      })
       setCreating(false)
       await load()
     } finally {
@@ -188,10 +200,16 @@ export default function AdminArtists() {
       })
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Failed to save')
+        toast.error(data?.msg || 'Failed to save',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success('Saved')
+      toast.success('Saved',{
+        position: 'top-center',
+        duration: 2000,
+      })
       setEditing(null)
       await load()
     } finally {
@@ -210,10 +228,16 @@ export default function AdminArtists() {
       })
       if (!r.ok) {
         const data = await r.json().catch(() => ({} as any))
-        toast.error(data?.msg || 'Failed to demote')
+        toast.error(data?.msg || 'Failed to demote',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success(`${p.name} moved back to client`)
+      toast.success(`${p.name} moved back to client`,{
+        position: 'top-center',
+        duration: 2000,
+      })
       setConfirm(null)
       await load()
     } finally {
@@ -231,7 +255,10 @@ export default function AdminArtists() {
         toast.error(data?.msg || 'Failed to remove')
         return
       }
-      toast.success(`${p.name} suspended`)
+      toast.success(`${p.name} suspended`,{
+        position: 'top-center',
+        duration: 2000,
+      })
       setConfirm(null)
       await load()
     } finally {
@@ -249,7 +276,10 @@ export default function AdminArtists() {
     try {
       const r = await fetch(`/api/providers/${p.id}/services`, { cache: 'no-store' })
       if (!r.ok) {
-        toast.error('Failed to load services')
+        toast.error('Failed to load services',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
       const data = await r.json()
@@ -291,7 +321,7 @@ export default function AdminArtists() {
   async function saveSvc() {
     if (!svcProvider || busy) return
     const err = validateDraft(svcDraft)
-    if (err) { toast.error(err); return }
+    if (err) { toast.error(err,{ position: 'top-center', duration: 2000 }); return }
     setBusy(true)
     try {
       const isNew = svcEditingId === 'new'
@@ -311,10 +341,16 @@ export default function AdminArtists() {
       })
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Failed to save service')
+        toast.error(data?.msg || 'Failed to save service',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success(isNew ? 'Service added' : 'Service updated')
+      toast.success(isNew ? 'Service added' : 'Service updated',{
+        position: 'top-center',
+        duration: 2000,
+      })
       // Re-pull services and refresh card list (artist card shows pills)
       const r2 = await fetch(`/api/providers/${svcProvider.id}/services`, { cache: 'no-store' })
       if (r2.ok) setSvcRows(await r2.json())
@@ -343,11 +379,17 @@ export default function AdminArtists() {
           cat = await r.json()
           setCatalog(Array.isArray(cat) ? cat : [])
         } else {
-          toast.error('Failed to load catalog')
+          toast.error('Failed to load catalog',{
+            position: 'top-center',
+            duration: 2000,
+          })
           return
         }
       } catch {
-        toast.error('Failed to load catalog')
+        toast.error('Failed to load catalog',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
     }
@@ -370,7 +412,10 @@ export default function AdminArtists() {
     setImportSourceLoading(true)
     try {
       const r = await fetch(`/api/providers/${sid}/services`, { cache: 'no-store' })
-      if (!r.ok) { toast.error('Failed to load source services'); return }
+      if (!r.ok) { toast.error('Failed to load source services',{
+        position: 'top-center',
+        duration: 2000,
+      }); return }
       const data: ServiceRow[] = await r.json()
       setImportSourceServices(Array.isArray(data) ? data : [])
       // Pre-check source services that match what's already on the target.
@@ -415,7 +460,10 @@ export default function AdminArtists() {
     if (!svcProvider || busy) return
     const mult = Number(importMultiplier)
     if (!Number.isFinite(mult) || mult <= 0) {
-      toast.error('Price multiplier must be a positive number')
+      toast.error('Price multiplier must be a positive number',{
+        position: 'top-center',
+        duration: 2000,
+      })
       return
     }
 
@@ -464,9 +512,9 @@ export default function AdminArtists() {
       }
     } else {
       const srcId = Number(importSourceId)
-      if (!srcId) { toast.error('Pick a source artist'); return }
+      if (!srcId) { toast.error('Pick a source artist',{ position: 'top-center', duration: 2000, }); return }
       if (srcId === svcProvider.id) {
-        toast.error('Source and target must be different')
+        toast.error('Source and target must be different',{ position: 'top-center', duration: 2000, })
         return
       }
       const onTargetTitles = new Set(svcRows.map(s => s.title.toLowerCase()))
@@ -496,7 +544,7 @@ export default function AdminArtists() {
       )
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Import failed')
+        toast.error(data?.msg || 'Import failed',{ position: 'top-center', duration: 2000, })
         return
       }
       const ins = data?.inserted_count ?? 0
@@ -507,7 +555,7 @@ export default function AdminArtists() {
       if (ins > 0) parts.push(`added ${ins}`)
       if (rem > 0) parts.push(`removed ${rem}`)
       if (skip > 0) parts.push(`${skip} skipped`)
-      toast.success(parts.length ? `Services synced: ${parts.join(', ')}` : 'No changes applied')
+      toast.success(parts.length ? `Services synced: ${parts.join(', ')}` : 'No changes applied',{ position: 'top-center', duration: 2000, })
       if (blocked.length > 0) {
         toast.warning(
           `Couldn't remove ${blocked.length}: tied to existing bookings`,
@@ -541,10 +589,16 @@ export default function AdminArtists() {
       )
       const data = await r.json().catch(() => ({} as any))
       if (!r.ok) {
-        toast.error(data?.msg || 'Failed to delete service')
+        toast.error(data?.msg || 'Failed to delete service',{
+          position: 'top-center',
+          duration: 2000,
+        })
         return
       }
-      toast.success('Service deleted')
+      toast.success('Service deleted',{
+        position: 'top-center',
+        duration: 2000,
+      })
       setSvcRows(prev => prev.filter(s => s.id !== row.id))
       await load()
     } finally {

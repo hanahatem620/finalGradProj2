@@ -24,9 +24,6 @@ export const authOptions: NextAuthOptions = {
                 });
 
                 const payload = await response.json();
-                console.log("Status:", response.status)
-    console.log("Payload:", payload)
-    console.log("Email sent:", credentials?.email)
 
                
                 if (!response.ok) {

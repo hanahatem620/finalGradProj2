@@ -3,7 +3,6 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { signOut, useSession } from 'next-auth/react'
 import { GoPerson } from "react-icons/go";
-import { FiUpload } from "react-icons/fi";
 import {
   Field,
   FieldDescription,
@@ -21,9 +20,66 @@ import { toast } from 'sonner';
 import AvatarUploader from '@/app/_components/AvatarUploader/AvatarUploader';
 
 
+type Preferences = {
+  new_booking_requests: boolean;
+  appointment_reminders: boolean;
+  system_updates: boolean;
+};
+
+export default function ProviderSettings() {
+
+  const { data: session } = useSession();
+  
+
+const [prefs, setPrefs] = useState<Preferences | null>(null);
+
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  async function load() {
+    setLoading(true);
+
+    const res = await fetch('/api/notificationPreference');
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    setPrefs({
+      new_booking_requests: !!data.new_booking_requests,
+      appointment_reminders: !!data.appointment_reminders,
+      system_updates: !!data.system_updates,
+    });
+
+    setLoading(false);
+  }
+
+  load();
+}, []);
 
 
-export default function providerSettings() {
+
+
+async function updatePrefs(updated: Partial<Preferences>) {
+  setPrefs(prev => prev ? { ...prev, ...updated } : prev);
+
+  try {
+    const newPrefs = { ...prefs, ...updated };
+    
+    const res = await fetch('/api/notificationPreference', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newPrefs),
+    });
+
+    if (!res.ok) {
+      setPrefs(prev => prev ? { ...prev, ...prefs } : prev);
+      toast.error('Failed to update preference');
+    }
+  } catch {
+    setPrefs(prev => prev ? { ...prev, ...prefs } : prev);
+    toast.error('Network error');
+  }
+}
 
   const [provider, setProvider] = useState<GetProvider | null>(null)
     const [saving, setSaving] = useState(false)
@@ -40,9 +96,9 @@ useEffect(() => {
     if (!res.ok) return
 
     const data = await res.json()
+    console.log(data)
 
     setProvider(data)
-    console.log(data)
   }
 
   load()
@@ -65,7 +121,6 @@ async function save() {
     })
 
     const data = await res.json().catch(() => null)
-    console.log(data)
 
     if (!res.ok) {
       toast(data?.msg || 'Failed to save', {
@@ -88,7 +143,6 @@ async function save() {
 }
 
 
-     const {data: session} = useSession()
       function logOut(){
         signOut({
           callbackUrl: "/LogIn"
@@ -217,7 +271,8 @@ async function save() {
             <Separator className='bg-gray-100'/>
         
                 <FieldGroup className="w-full">
-                    <FieldLabel htmlFor="switch-share">
+
+                    <FieldLabel htmlFor="new-bookings">
                 <Field orientation="horizontal">
                   <FieldContent className='gap-0'>
                     <FieldTitle>New Bookings</FieldTitle>
@@ -225,7 +280,27 @@ async function save() {
                      Get notified when a new booking is made
                     </FieldDescription>
                   </FieldContent>
-                  <Switch id="switch-share" />
+                  <Switch id="new-bookings"
+                   checked={prefs?.new_booking_requests ?? false}
+  onCheckedChange={(val) =>
+    updatePrefs({ new_booking_requests: val })
+  } />
+                </Field>
+                    </FieldLabel>
+
+                    <FieldLabel htmlFor="Appointment-reminders">
+                <Field orientation="horizontal">
+                  <FieldContent className='gap-0'>
+                    <FieldTitle>Appointment Reminders</FieldTitle>
+                    <FieldDescription>
+                     Get notified about upcoming appointments
+                    </FieldDescription>
+                  </FieldContent>
+                  <Switch id="Appointment-reminders"
+                   checked={prefs?.appointment_reminders ?? false}
+  onCheckedChange={(val) =>
+    updatePrefs({ appointment_reminders: val })
+  } />
                 </Field>
                     </FieldLabel>
         
@@ -240,19 +315,6 @@ async function save() {
                   <Switch id="switch-share" />
                 </Field>
                     </FieldLabel>
-        
-                    {/* <FieldLabel htmlFor="switch-share">
-                <Field orientation="horizontal">
-                  <FieldContent className='gap-0'>
-                    <FieldTitle>Promotions</FieldTitle>
-                    <FieldDescription>
-                     Stay updated on special offers and deals
-                    </FieldDescription>
-                  </FieldContent>
-                  <Switch id="switch-share" />
-                </Field>
-                    </FieldLabel> */}
-        
 
               </FieldGroup>
         

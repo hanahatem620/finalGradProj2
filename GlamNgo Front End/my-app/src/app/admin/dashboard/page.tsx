@@ -2,10 +2,9 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { LuUsers, LuCalendarCheck2 } from 'react-icons/lu'
-import { FaStar, FaMoneyBillWave } from 'react-icons/fa6'
+import { FaMoneyBillWave } from 'react-icons/fa6'
 import { HiOutlineUsers } from 'react-icons/hi2'
 import { AdminBooking, DashStats } from '@/types/adminBooking.type'
 import { LuPalette } from "react-icons/lu";
@@ -27,7 +26,6 @@ const cardVariants = {
 }
 
 export default function AdminDashboard() {
-  const { data: session } = useSession()
   const [stats, setStats] = useState<DashStats | null>(null)
   const [bookings, setBookings] = useState<AdminBooking[]>([])
   const [loading, setLoading] = useState(true)

@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { forgotUserPass } from "@/profileActions/forgotPass.action"
 import { resetUserPassword } from "@/profileActions/resetPass.action"
-import { useParams, useRouter, useSearchParams } from "next/navigation"
+import {  useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner";
@@ -42,7 +42,6 @@ async function handleResetPass(data: { password: string }) {
       position: "top-center",
       duration: 2000,
     });
-    console.log(token);
     return;
   }
 
@@ -50,7 +49,6 @@ async function handleResetPass(data: { password: string }) {
   try {
 
     const res = await resetUserPassword(token, data.password);
-    console.log(res);
 
     if (res.msg == "Password reset successful") {
       toast.success("Password reset successfully", {
@@ -67,7 +65,6 @@ async function handleResetPass(data: { password: string }) {
 
   } catch (err) {
     toast.error("Server error");
-    console.log(err);
   }
 }
 

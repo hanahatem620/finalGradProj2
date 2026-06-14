@@ -9,8 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertCircleIcon } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { artistSchema, artistSchemaType } from "@/schema/artist.shcema"
-import { zodResolver } from "@hookform/resolvers/zod"
+import {  artistSchemaType } from "@/schema/artist.shcema"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -123,8 +122,6 @@ async function handleArtistLogin(values: artistSchemaType) {
       body: fd,
     })
     const data = await res.json().catch(() => ({} as any))
-
-    console.log(data);
     
 
     if (res.status === 401 || data?.code === 'UNAUTHENTICATED') {
@@ -430,6 +427,7 @@ async function handleArtistLogin(values: artistSchemaType) {
                 <div className="mt-10 flex flex-col gap-4">
                   <FieldGroup>
                     <Controller
+
                       name="yearsOfExperience"
                       control={control}
                       render={({ field, fieldState }) => (
@@ -439,7 +437,7 @@ async function handleArtistLogin(values: artistSchemaType) {
                             type="number"
                             placeholder="Years of Experience"
                             // FIX: coerce string → number for number inputs
-                            value={field.value }
+                            value={field.value}
                             onChange={(e) =>
                               field.onChange(e.target.valueAsNumber)
                             }

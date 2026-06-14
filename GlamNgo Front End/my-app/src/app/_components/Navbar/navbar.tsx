@@ -11,8 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MdHomeFilled } from 'react-icons/md'
@@ -187,9 +186,6 @@ export default function Navbar() {
               <Link href='/contactUs' className='text-sm hover:text-pink-500 '>Contact Us</Link>
               <Link href='/aboutUs' className='text-sm hover:text-pink-500 '>About Us</Link>
 
-
-
-
               <Link href='/bookService'>
                 <Button className='bg-linear-to-b from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'>
                   Book a Service
@@ -233,17 +229,26 @@ export default function Navbar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuGroup>
-                    <DropdownMenuItem asChild><Link href='/bookService'>Book a Service</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/offers'>Special offers</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/giftCard'>Gift cards</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href='/membership'>Membership</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/ourService'>Our services</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link href='/howItWork'>How it works</Link></DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Link href='/artists' onClick={() => setOpen(false)} className='block py-1'>Artists</Link>
-               <Link href='/becomeAPro' className='text-sm hover:text-pink-500'>Become a Pro</Link>
+      <div className='flex flex-col gap-3 mt-2'>
+                 <Link href='/becomeAPro' className='text-sm hover:text-pink-500'>Become a Pro</Link>
+                 <Link href='/contactUs' className='text-sm hover:text-pink-500 '>Contact Us</Link>
+              <Link href='/aboutUs' className='text-sm hover:text-pink-500 '>About Us</Link>
+
+              <Link href='/bookService'>
+                <Button className='bg-linear-to-b from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white'>
+                  Book a Service
+                </Button>
+              </Link>
+      </div>
+               
 
               {/* <Link href='/ourService' onClick={() => setOpen(false)} className='block py-1'>Our Services</Link>
               <Link href='/howItWork' onClick={() => setOpen(false)} className='block py-1'>How It Works</Link> */}

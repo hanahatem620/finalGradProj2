@@ -44,7 +44,6 @@ useEffect(() => {
 
       const data = await res.json();
 
-      console.log("DATA:", data);
 
       setBooking(data);
     } catch (err) {
@@ -275,7 +274,9 @@ useEffect(() => {
                     <p className='text-gray-500'>({booking?.artist?.reviews?.review_count} reviews)</p>
                 </div>
 
-                    <p className='text-gray-500 max-w-85'>Professional hair stylist with 10+ years of experience specializing in color treatments and precision cuts.</p>
+                    <p className='text-gray-500 max-w-85'>Professional hair stylist with 10+ years of experience specializing in color treatments and precision cuts.
+                      {booking?.artist.bio}
+                    </p>
             </div>
 
             </div>

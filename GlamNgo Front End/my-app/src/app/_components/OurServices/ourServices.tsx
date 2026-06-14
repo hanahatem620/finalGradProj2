@@ -1,5 +1,4 @@
 'use client'
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -12,7 +11,6 @@ import {
 import { MdOutlinePalette } from "react-icons/md";
 import { PiScissors } from "react-icons/pi";
 import { LuSparkles } from "react-icons/lu";
-import { FaRegHand } from "react-icons/fa6";
 import ServiceBookingBtn from "../ServiceBookingBtn/serviceBookingBtn";
 
 

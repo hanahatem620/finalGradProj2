@@ -4,18 +4,10 @@ import { LuPhone } from "react-icons/lu";
 import { Button } from "@/components/ui/button"
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea";
 import HomeFooter from "../_components/HomeFooter/homeFooter";
 
@@ -31,7 +23,7 @@ export default function ContactUs() {
      <div className='py-15 bg-linear-to-r from-purple-50 to-pink-50'>
       <div className='container mx-auto text-center'>
         <h1 className='text-4xl font-bold'>Contact Us</h1>
-        <p className='text-gray-500 max-w-115 mx-auto mt-3'>Have questions? we'd love to hear from you. Send us a message and we'll respond as soon as possible</p>
+        <p className='text-gray-500 max-w-115 mx-auto mt-3'>Have questions? we&#39;d love to hear from you. Send us a message and we&#39;ll respond as soon as possible</p>
       </div>
     </div>
 

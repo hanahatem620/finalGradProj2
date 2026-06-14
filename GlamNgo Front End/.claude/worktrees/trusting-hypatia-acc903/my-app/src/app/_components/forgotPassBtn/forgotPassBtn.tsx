@@ -37,7 +37,6 @@ const form = useForm({
 async function forgotPassword({email}: {email:string} ){
 
    const res = await forgotUserPass({email})
-    console.log(res);
     
    if(res.msg == 'Password reset email sent'){
           toast.success(res.msg, {
@@ -50,14 +49,12 @@ async function forgotPassword({email}: {email:string} ){
         
         
 
-          console.log(res);
           
       }if(res.msg == 'If email exists, reset link sent'){
              toast.error("An error occurred",{
               position: 'top-center',
               duration:2000,
           })
-          console.log(res);
       }
           
       

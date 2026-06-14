@@ -35,7 +35,6 @@ export default function AiFeatures() {
   const [result, setResult] = useState<string | null>(null)
  
 // makeup state
-  const [customFile, setCustomFile] = useState<File | null>(null)
   const [customLoading, setCustomLoading] = useState(false)
 
 
@@ -44,7 +43,6 @@ export default function AiFeatures() {
     async function flag() {
       const res = await AiTryOne()
       setLooks(res.looks)
-      // console.log('aifaeture res' , res)
     }
 
     flag()
@@ -68,7 +66,6 @@ export default function AiFeatures() {
     setResult(image)
   } catch (err) {
     toast.error("Something went wrong")
-    // console.log(err)
   } finally {
     setCustomLoading(false)
   }
@@ -146,7 +143,7 @@ export default function AiFeatures() {
         {result && (
         <div className="mt-6">
           <h2>Result:</h2>
-          <img src={result} alt="Ai Makeup Result" width={500} height={500} loading='eager' />
+          <Image src={result} alt="Ai Makeup Result" width={500} height={500} loading='eager' />
         </div>
       )}
 

@@ -1,5 +1,5 @@
 export interface allServices {
-  bio: any
+  bio: string
   contact_info: any
   created_at: any
   discount: number

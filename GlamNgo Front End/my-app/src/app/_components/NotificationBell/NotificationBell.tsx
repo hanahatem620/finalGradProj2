@@ -9,22 +9,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ApiPayload, NotificationItem } from '@/types/NotificationItem.type'
 
-interface NotificationItem {
-  id: number
-  user_id: number
-  type: string
-  title: string
-  body: string
-  is_read: number
-  action_url: string | null
-  created_at: string
-}
-
-interface ApiPayload {
-  unread_count: number
-  notifications: NotificationItem[]
-}
 
 const POLL_MS = 30_000
 

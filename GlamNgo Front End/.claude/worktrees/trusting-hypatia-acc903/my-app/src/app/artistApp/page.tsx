@@ -77,8 +77,7 @@ export default function ArtistApp() {
 async function handleArtistLogin(values: artistSchemaType) {
   try {
     const res = await axios.post("http://127.0.0.1:5001/artist/verification", values)
-    console.log(res)
-    console.log(values)
+
     if (res.status === 200) {
       toast.success("Application submitted successfully!", {
         duration: 3000,

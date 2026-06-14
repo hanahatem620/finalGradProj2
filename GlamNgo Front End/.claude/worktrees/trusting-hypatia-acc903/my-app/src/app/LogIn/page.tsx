@@ -63,8 +63,6 @@ async function handleLogIn(values: loginSchemaType) {
     redirect: false,
   });
 
-  console.log(res)
-  console.log(values)
 
   if (res?.ok) {
     toast.success("You logged in successfully", {
@@ -94,10 +92,8 @@ async function handleLogIn(values: loginSchemaType) {
 
 
 async function handleSignUp(values : signUpSchemaType){
-  console.log(values);
   
 axios.post("http://127.0.0.1:5001/auth/register" , values).then((res) => {
-  console.log(res);
   if(res.data.msg == 'User created successfully'){
     toast.success("You signed up successfully" ,{
       duration:3000,
@@ -107,7 +103,6 @@ axios.post("http://127.0.0.1:5001/auth/register" , values).then((res) => {
   }
   
 }).catch((err) => {
-  console.log(err);
   if(err){
     toast.error("Failed to sign up. Please try again.",{
       duration:3000,

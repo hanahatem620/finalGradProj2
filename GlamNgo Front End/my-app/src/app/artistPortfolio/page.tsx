@@ -139,7 +139,6 @@ function ArtistPortfolioInner() {
       .then(data => {
         if (cancelled || !data) return
         setSegments(data.segments || [])
-        console.log(data);
       })
       
       
@@ -192,6 +191,14 @@ function ArtistPortfolioInner() {
         toast.error(bookingData.msg || 'Booking failed', { position: 'top-center' })
         return
       }
+
+        if (bookingRes.status === 403) {
+    toast.error('Only clients can make bookings', {
+      position: 'top-center',
+      duration: 2000,
+    });
+    return;
+  }
 
       // 2. Record payment method (only 'FAWRY' or 'CARD' — no card details stored)
       await fetch('/api/payments', {
@@ -345,7 +352,7 @@ useEffect(() => {
         {provider.bio && (
           <>
             <Separator orientation='vertical' className='hidden md:block' />
-            <p className='text-gray-600 flex-1'>{provider.bio}</p>
+            {/* <p className='text-gray-600'>{provider.bio}</p> */}
           </>
         )}
       </motion.div>

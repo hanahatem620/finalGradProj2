@@ -1,5 +1,4 @@
 'use client'
-import { BiDollar } from "react-icons/bi";
 import { RiGroupLine } from "react-icons/ri";
 import { CiCalendar } from "react-icons/ci";
 import {Table} from "@heroui/react";
@@ -8,9 +7,7 @@ import { useEffect, useState } from "react";
 import { GetProvider } from "@/types/getProvider";
 import { ProviderDash } from "@/types/providerDashboard.type";
 import { ProviderBook } from "@/types/providerBooking.type";
-import { motion } from 'framer-motion'
 import { Badge } from "@/components/ui/badge";
-import { Booking } from "@/types/adminBookingReceipt.type";
 import { toast } from "sonner";
 
 
@@ -65,14 +62,12 @@ useEffect(() => {
     const data = await res.json()
 
     setDash(data)
-    // console.log(data)
   }
 
   load()
 }, [])
 
 
-  const [b, setB] = useState<Booking | null>(null)
   const [saving, setSaving] = useState(false)
 
 
@@ -123,7 +118,7 @@ async function applyStatus(id: number, status: string) {
 
     <div>
         <h2 className='text-3xl'>Hello, <span className='font-bold text-pink-500'>{provider?.name}</span></h2>
-        <p className='text-pink-500'>Here's what's happening today in your business</p>
+        <p className='text-pink-500'>Here&#39;s what&#39;s happening today in your business</p>
     </div>
 
     <div className="flex gap-4">
@@ -237,15 +232,26 @@ async function applyStatus(id: number, status: string) {
             <h2 className="font-bold mb-3">LATEST REVIEW ABOUT YOUR WORK</h2>
         </div>
 
-        <div className="flex  items-center gap-2">
-            <div>
-                <p className="text-pink-500 bg-pink-100 p-2 w-fit rounded-full font-bold">{getInitials(dash?.reviews?.items[0]?.client_name ?? '')}</p>
-            </div>
-            <div>
-                <h2>{dash?.reviews?.items[0]?.client_name || 'No reviews yet'}</h2>
-                <p className="font-semibold">{dash?.reviews?.items[0]?.comment || 'No comments yet'}</p>
-            </div>
+       <div className="flex flex-col gap-4">
+  {dash?.reviews?.items?.length ? (
+    dash.reviews.items.map((review, index) => (
+      <div key={index} className="flex items-center gap-2">
+        <div>
+          <p className="text-pink-500 bg-pink-100 p-2 w-fit rounded-full font-bold">
+            {getInitials(review.client_name)}
+          </p>
         </div>
+
+        <div>
+          <h2>{review.client_name}</h2>
+          <p className="font-semibold">{review.comment}</p>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p>No reviews yet</p>
+  )}
+</div>
 
 
     </div>

@@ -1,13 +1,13 @@
 export interface User {
-  bio: any
-  contact_info: any
+  bio: string
+  contact_info: string
   created_at: string
   email: string
   id: number
-  image_url: any
-  location: any
+  image_url: string
+  location: string
   name: string
-  phone: any
+  phone: number
   role: string
   status: string
   user_id: number

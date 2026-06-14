@@ -3,12 +3,10 @@ import { ProviderBook } from "@/types/providerBooking.type";
 import { Table} from "@heroui/react";
 import { useEffect, useState } from "react";
 import { motion } from 'framer-motion'
-import { Booking } from "@/types/adminBookingReceipt.type";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -26,7 +24,6 @@ import { Separator } from "@/components/ui/separator";
 export default function ProviderBookings() {
 
 const [book, setBook] = useState<ProviderBook | null>(null)
-  const [b, setB] = useState<Booking | null>(null)
   const [saving, setSaving] =useState(false)
 
 
@@ -61,7 +58,6 @@ const cancelled = bookings.filter(
     const data = await res.json()
 
     setBook(data)
-    console.log(data)
   }
 
   load()
@@ -79,7 +75,6 @@ async function applyStatus(id: number, status: string) {
       body: JSON.stringify({ status }),
     })
     const data = await res.json()
-    console.log(data);
     
 
     if (!res.ok) {
@@ -89,7 +84,6 @@ async function applyStatus(id: number, status: string) {
 
     toast.success(`Status → ${status.toLowerCase()}`, { position: 'top-center' })
 
-    // 👇 مهم عشان UI يتحدث
     window.location.reload()
 
   } finally {

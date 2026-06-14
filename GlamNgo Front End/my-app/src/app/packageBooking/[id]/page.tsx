@@ -112,7 +112,6 @@ const [email, setEmail] = useState('')
       if (!res.ok) throw new Error()
 
       const data = await res.json()
-      console.log("Package details:", data)
 
       setPackageData(data.package)
       setArtists(data.artists)
@@ -159,12 +158,13 @@ const [email, setEmail] = useState('')
       return
     }
 
-    console.log({
-  booking_id: bookingData.id,
-  method,
-  amount: packageData.price,
-  status: 'COMPLETED',
-})
+      if (bookingRes.status === 403) {
+    toast.error('Only clients can make bookings', {
+      position: 'top-center',
+      duration: 2000,
+    });
+    return;
+  }
 
     await fetch('/api/payments', {
       

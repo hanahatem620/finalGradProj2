@@ -21,7 +21,6 @@ import { useEffect, useState } from "react"
 export default function ClientSettings() {
 
       const {data: session} = useSession()
-      // console.log(session);
       
       function logOut(){
         signOut({
@@ -36,11 +35,6 @@ export default function ClientSettings() {
       async function getLoggedUser(){
           const res = await getUser()
           setUser(res)
-        console.log('USER' , user);
-        console.log('RES' , res);
-        console.log('SESSION' , session)
-        // console.log('TOKEN' , token)
-        // console.log('ACCESS_TOKEN' , access_token)
       
       
       }

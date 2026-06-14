@@ -2,17 +2,14 @@
 import Link from 'next/link'
 import { RiHashtag } from "react-icons/ri";
 import { CiCalendar } from "react-icons/ci";
-import { LuCalendarCheck2 } from "react-icons/lu";
 import { IoBookOutline } from "react-icons/io5";
 import { MdFavoriteBorder } from "react-icons/md";
 import { LuCreditCard } from "react-icons/lu";
 import { BsGear } from "react-icons/bs";
 import { RxQuestionMarkCircled } from "react-icons/rx";
-import { Separator } from "@/components/ui/separator"
-import { GiHamburgerMenu } from "react-icons/gi";
-import { useState } from 'react';
 import { IoCloseSharp } from "react-icons/io5";
 import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation'
 type AsideNavProps = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -24,7 +21,11 @@ type AsideNavProps = {
 
 export default function AsideNav({open , setOpen} : AsideNavProps) {
 
-
+const pathname = usePathname()
+const activeClass = (path: string) =>
+  pathname === path
+    ? 'bg-pink-50 border border-pink-400 text-pink-600 rounded-md'
+    : 'hover:bg-pink-100'
 
 
   return (
@@ -38,42 +39,36 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
         <div className="h-full px-3 py-12 overflow-y-auto bg-neutral-primary-soft border-e border-pink-300 bg-white flex flex-col justify-between">
           <ul className="space-y-2 font-medium">
             <li>
-              <Link href={'/client/dashboard'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-pink-300 hover:text-fg-brand group">
-                <RiHashtag className='text-xl text-pink-500'/>
+              <Link href={'/client/dashboard'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/dashboard')}`}>
+                <RiHashtag className='text-xl'/>
                 <span className="ms-3">Dashboard</span>
               </Link>
             </li>
 
             <li>
-              <Link href={'/client/booking'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+              <Link href={'/client/booking'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/booking')}`}>
                 <CiCalendar className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">My Booking</span>
               </Link>
             </li>
 
-            {/* <li>
-              <Link href={'/client/schedule'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                    <LuCalendarCheck2 className='text-xl'/>
-                <span className="flex-1 ms-3 whitespace-nowrap">My Schedule</span>
-              </Link>
-            </li> */}
 
             <li>
-              <Link href={'/client/notifications'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+              <Link href={'/client/notifications'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/notifications')}`}>
                 <IoBookOutline className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Notifications</span>
               </Link>
             </li>
 
             <li>
-              <Link href={'/client/favorites'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+              <Link href={'/client/favorites'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/favorites')}`}>
                     <MdFavoriteBorder className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Favorites</span>
               </Link>
             </li>
 
             <li>
-              <Link href={'/client/payment'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+              <Link href={'/client/payment'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/payment')}`}>
                     <LuCreditCard className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Payments</span>
               </Link>
@@ -86,14 +81,14 @@ export default function AsideNav({open , setOpen} : AsideNavProps) {
             </li>
 
             <li>
-              <Link href={'/client/settings'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-pink-300 hover:text-fg-brand group">
+              <Link href={'/client/settings'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/settings')}`}>
                 <BsGear className='text-xl'/>
                 <span className="ms-3">Settings</span>
               </Link>
             </li>
 
             <li>
-              <Link href={'/client/helpCenter'} className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+              <Link href={'/client/helpCenter'} className={`flex items-center px-2 py-1.5 text-body rounded-md hover:bg-pink-300 hover:rounded-md group ${activeClass('/client/helpCenter')}`}>
                 <RxQuestionMarkCircled className='text-xl'/>
                 <span className="flex-1 ms-3 whitespace-nowrap">Help center</span>
               </Link>

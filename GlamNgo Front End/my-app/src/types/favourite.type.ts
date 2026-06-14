@@ -17,8 +17,8 @@ export interface Artist {
   role: string
   email: string
   image?: string
-  location: any
-  bio: any
+  location: string
+  bio: string
 }
 
 export interface Service {

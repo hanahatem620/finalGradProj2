@@ -5,7 +5,6 @@ import { authOptions } from '../../auth';
 export async function getUser() {
   const session = await getServerSession(authOptions);
   if (!session?.access_token) return null;
-  // console.log("session" , session)
 
 
   const res = await fetch('http://127.0.0.1:5001/me', {

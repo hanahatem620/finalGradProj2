@@ -41,7 +41,6 @@ export default function Navbar() {
   pathname.startsWith('/client') ||
   pathname.startsWith('/artist') ||
   pathname.startsWith('/admin')
-  // console.log(session);
   
   function logOut(){
     signOut({

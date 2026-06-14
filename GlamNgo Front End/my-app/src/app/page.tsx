@@ -17,7 +17,9 @@ export default function Home() {
  <div className="bg-white">
    <Bundels/> 
  </div>
-  <Artists limit={4}/>
+
+  <Artists/>
+
 
     <div className="bg-white py-8">
        <div className="service text-center">
